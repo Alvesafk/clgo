@@ -14,5 +14,5 @@ func main() {
 		return
 	}
 
-	core.CountLinesOfFile(args[1])
+	core.CountLinesRecursive(args[1])
 }
