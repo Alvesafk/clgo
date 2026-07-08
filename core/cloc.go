@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
+	"sync"
 )
 
 type FileEntry struct {
 	Entry os.DirEntry
-	Path string
+	Path  string
 }
 
 const (
@@ -17,19 +19,41 @@ const (
 
 func CountLinesRecursive(dirpath string) {
 	dirs := genFileArray(getDirs(dirpath), RECURSION_LIMIT)
-	
 
-	fmt.Println(dirs)
+	jobs := make(chan FileEntry, len(dirs))
+	results := make(chan int, len(dirs))
 
-	var counter int
-	for _, v := range dirs {
-		absFilename := filepath.Join(v.Path, "/", v.Entry.Name())
-		counter += countLinesOfFile(absFilename)
+	numWorkers := runtime.NumCPU()
+	var wg sync.WaitGroup
+
+	for range numWorkers {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for v := range jobs {
+				absFilename := filepath.Join(v.Path, v.Entry.Name())
+				results <- countLinesOfFile(absFilename)
+			}
+		}()
 	}
 
-	fmt.Println(counter)
-}
+	for _, v := range dirs {
+		jobs <- v
+	}
+	close(jobs)
 
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	var totalLines int
+	for r := range results {
+		totalLines += r
+	}
+
+	fmt.Println(totalLines)
+}
 func countLinesOfFile(filename string) int {
 	file, err := os.ReadFile(filename)
 	if err != nil {
@@ -40,7 +64,7 @@ func countLinesOfFile(filename string) int {
 	var counter int
 	for _, c := range file {
 		if c == '\n' {
-			counter+=1
+			counter += 1
 		}
 	}
 
@@ -58,7 +82,7 @@ func genFileArray(arr []FileEntry, recLimit int) []FileEntry {
 		}
 	}
 	if dirFound > 0 && recLimit > 0 {
-		arr = genFileArray(arr, recLimit)
+		arr = genFileArray(arr, recLimit-1)
 	}
 	return arr
 }
