@@ -11,7 +11,26 @@ type FileEntry struct {
 	Path string
 }
 
-func CountLinesOfFile(filename string) {
+const (
+	RECURSION_LIMIT = 20
+)
+
+func CountLinesRecursive(dirpath string) {
+	dirs := genFileArray(getDirs(dirpath), RECURSION_LIMIT)
+	
+
+	fmt.Println(dirs)
+
+	var counter int
+	for _, v := range dirs {
+		absFilename := filepath.Join(v.Path, "/", v.Entry.Name())
+		counter += countLinesOfFile(absFilename)
+	}
+
+	fmt.Println(counter)
+}
+
+func countLinesOfFile(filename string) int {
 	file, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Println(err)
@@ -25,16 +44,10 @@ func CountLinesOfFile(filename string) {
 		}
 	}
 
-	fmt.Println(counter)
+	return counter
 }
 
-func CountLinesRecursive(filepath string) {
-	dir := getDirs(filepath)
-
-	fmt.Println(genFileArray(dir))
-}
-
-func genFileArray(arr []FileEntry) []FileEntry {
+func genFileArray(arr []FileEntry, recLimit int) []FileEntry {
 	var dirFound int
 	for i, v := range arr {
 		if v.Entry.IsDir() {
@@ -44,8 +57,8 @@ func genFileArray(arr []FileEntry) []FileEntry {
 			dirFound++
 		}
 	}
-	if dirFound > 0 {
-		arr = genFileArray(arr)
+	if dirFound > 0 && recLimit > 0 {
+		arr = genFileArray(arr, recLimit)
 	}
 	return arr
 }
