@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2026 Alvesafk. All Rights Reserved.
+
+Package main is the entry to clgo.
+*/
 package main
 
 import (
@@ -13,21 +18,26 @@ import (
 )
 
 var (
-	config core.Config
+	config core.Config // Config struct for flags.
 
-	help bool
+	help bool // It's true when help flag is passed.
 )
 
 func init() {
+	// Help flag.
 	flag.BoolVar(&help, "help", false, "Show usage")
 	flag.BoolVar(&help, "h", false, "Show usage")
 
+	// No recursion flag, disables recursion so only one dir will be counted.
 	flag.BoolVar(&config.NoRecursion, "noRecursion", false, "Disables recursion, therefore only the first directory will be used.")
 	flag.BoolVar(&config.NoRecursion, "nr", false, "Disables recursion, therefore only the first directory will be used.")
 
+	// No stats flag, disable the stats after line print.
 	flag.BoolVar(&config.NoStats, "noStats", false, "Disables stats after execution.")
 	flag.BoolVar(&config.NoStats, "ns", false, "Disables stats after execution.")
 
+	// No ignore dot files, disable the normal behaviour of ignoring files that begin
+	// with a dot, ".".
 	flag.BoolVar(&config.NoIgnoreDotFiles, "noIgnoreDotFiles", false, "Ignore files that start with a dot '.'.")
 	flag.BoolVar(&config.NoIgnoreDotFiles, "ni", false, "Ignore files that start with a dot '.'.")
 }
@@ -44,9 +54,11 @@ func main() {
 
 	if len(args) < 1 {
 		ansi.Red.FgPrintln("No path was passed to the program, aborting.")
+		usage()
 		return
 	} else if len(args) > 1 {
 		ansi.Red.FgPrintln("Too many paths were passed to the program, aborting.")
+		usage()
 		return
 	}
 

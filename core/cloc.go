@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2026 Alvesafk. All Rights Reserved.
+
+Core package has the business logic of clgo.
+*/
 package core
 
 import (
@@ -9,28 +14,32 @@ import (
 	"sync"
 )
 
+// Config struct for optional flags defined in main.go.
 type Config struct {
 	NoRecursion      bool
 	NoStats          bool
 	NoIgnoreDotFiles bool
 }
 
+// fileEntry struct has the actual os.DirEntry and the path of the file.
 type fileEntry struct {
 	Entry os.DirEntry
 	Path  string
 }
 
+// fullpath method retuns a string with the full path of f file.
 func (f fileEntry) fullpath() string {
 	return filepath.Join(f.Path, f.Entry.Name())
 }
 
+// dirResult is used when getting the dirs / files when recrusing in a directory.
 type dirResult struct {
 	dirs  []fileEntry
 	files []fileEntry
 }
 
 const (
-	RECURSION_LIMIT = 50
+	RECURSION_LIMIT = 20 // Limit for recursion.
 )
 
 var (
@@ -38,6 +47,9 @@ var (
 	totalIgnoredFiles int
 )
 
+// ProgramEntry function receives a path string and a config struct, it returns 3 ints in
+// order: total amount of files counted, total lines counted and total ignored files. The
+// function manages if path that was passed is of a directory or if is from a normal file.
 func ProgramEntry(path string, config Config) (int, int ,int) {
 	if IsDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
@@ -55,6 +67,8 @@ func ProgramEntry(path string, config Config) (int, int ,int) {
 	}
 }
 
+// countLinesRecursive function count the lines of a file arrays, it uses concorrency, the
+// function create workers to count the lines of each directory file concorrently.
 func countLinesRecursive(dirs []fileEntry) (int, int, int) {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan int, len(dirs))
@@ -90,6 +104,7 @@ func countLinesRecursive(dirs []fileEntry) (int, int, int) {
 	return totalFilesCounted, totalLines, totalIgnoredFiles
 }
 
+// countLinesOfFile function count all the lines of a file passed into it.
 func countLinesOfFile(filename string) int {
 	if IsDir(filename) {
 		totalIgnoredFiles++
@@ -114,6 +129,9 @@ func countLinesOfFile(filename string) int {
 	return counter
 }
 
+// genFileArray function get all the files of a dir and subdir using a slice of fileEntry
+// as base, it uses recursion and concorrency with workers to go aggroupate all files into
+// a file slice.
 func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fileEntry {
 	if len(dirArr) == 0 {
 		return fileArr
@@ -166,6 +184,8 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fi
 	return fileArr
 }
 
+// getDirs function returns a slice of fileEntry reading a directory based on a dirPath
+// string.
 func getDirs(dirPath string) []fileEntry {
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
@@ -178,6 +198,7 @@ func getDirs(dirPath string) []fileEntry {
 	return result
 }
 
+// IsDir function returns true if path string is == the path of a directory.
 func IsDir(filename string) bool {
 	fi, err := os.Stat(filename)
 	if err != nil {
