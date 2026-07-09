@@ -8,6 +8,11 @@ import (
 	"sync"
 )
 
+type Config struct {
+	NoRecursion bool
+	NoStats     bool
+}
+
 type fileEntry struct {
 	Entry os.DirEntry
 	Path  string
@@ -30,9 +35,15 @@ var (
 	totalFilesCounted int
 )
 
-func CountLinesRecursive(dirpath string) (int, int) {
+func CountLinesRecursive(dirpath string, config Config) (int, int) {
 	fileArr := make([]fileEntry, 0, 10)
-	dirs := genFileArray(fileArr, getDirs(dirpath), RECURSION_LIMIT)
+
+	recursion := RECURSION_LIMIT
+	if config.NoRecursion {
+		recursion = 0
+	}
+
+	dirs := genFileArray(fileArr, getDirs(dirpath), recursion)
 
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan int, len(dirs))
