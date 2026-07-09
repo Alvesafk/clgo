@@ -17,6 +17,10 @@ func main() {
 	}
 
 	start := time.Now()
-	core.CountLinesRecursive(args[1])
-	fmt.Printf("Time elapsed: %.6f\n", time.Since(start).Seconds())
+	totalFilesCounted, totalLines := core.CountLinesRecursive(args[1])
+	totalTime := time.Since(start).Seconds()
+
+	fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
+	fmt.Printf("Files counted :: %v\nRate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
+		totalFilesCounted, float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
 }

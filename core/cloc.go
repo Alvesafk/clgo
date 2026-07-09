@@ -23,14 +23,14 @@ type dirResult struct {
 }
 
 const (
-	RECURSION_LIMIT = 20
+	RECURSION_LIMIT = 50
 )
 
 var (
 	totalFilesCounted int
 )
 
-func CountLinesRecursive(dirpath string) {
+func CountLinesRecursive(dirpath string) (int, int) {
 	fileArr := make([]fileEntry, 0, 10)
 	dirs := genFileArray(fileArr, getDirs(dirpath), RECURSION_LIMIT)
 
@@ -66,6 +66,8 @@ func CountLinesRecursive(dirpath string) {
 	}
 
 	fmt.Printf("%v lines were counted on %v files.\n", totalLines, totalFilesCounted)
+
+	return totalFilesCounted, totalLines
 }
 
 func countLinesOfFile(filename string) int {
