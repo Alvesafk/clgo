@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/Alvesafk/clgo/core"
@@ -46,14 +47,32 @@ func main() {
 		return
 	}
 
-	start := time.Now()
-	totalFilesCounted, totalLines := core.CountLinesRecursive(args[0], config)
-	totalTime := time.Since(start).Seconds()
+	isDir := core.IsDir(args[0])
 
-	if !config.NoStats {
-		fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
-		fmt.Printf("Files counted :: %v\nRate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
-			totalFilesCounted, float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
+	start := time.Now()
+	if isDir {
+		totalFilesCounted, totalLines := core.CountLinesRecursive(args[0], config)
+		totalTime := time.Since(start).Seconds()
+
+		fmt.Printf("%v lines were counted on %v files.\n", totalLines, totalFilesCounted)
+
+		if !config.NoStats {
+			fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
+			fmt.Printf("Files counted :: %v\nRate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
+				totalFilesCounted, float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
+		}
+
+	} else {
+		totalLines := core.CountLinesOfFile(args[0])
+		totalTime := time.Since(start).Seconds()
+
+		fmt.Printf("%v lines were counted on %v.\n", totalLines, filepath.Base(args[0]))
+
+		if !config.NoStats {
+			fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
+			fmt.Printf("Rate of Lines :: %.2f/s\n", float64(totalLines)/totalTime)
+
+		}
 	}
 }
 

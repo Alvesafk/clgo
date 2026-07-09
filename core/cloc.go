@@ -56,7 +56,7 @@ func CountLinesRecursive(dirpath string, config Config) (int, int) {
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
-				results <- countLinesOfFile(v.fullpath())
+				results <- CountLinesOfFile(v.fullpath())
 			}
 		}()
 	}
@@ -76,19 +76,11 @@ func CountLinesRecursive(dirpath string, config Config) (int, int) {
 		totalLines += r
 	}
 
-	fmt.Printf("%v lines were counted on %v files.\n", totalLines, totalFilesCounted)
-
 	return totalFilesCounted, totalLines
 }
 
-func countLinesOfFile(filename string) int {
-	fi, err := os.Stat(filename)
-	if err != nil {
-		fmt.Println(err)
-		return 0
-	}
-
-	if fi.Mode().IsDir() {
+func CountLinesOfFile(filename string) int {
+	if IsDir(filename) {
 		return 0
 	}
 
@@ -168,4 +160,18 @@ func getDirs(dirPath string) []fileEntry {
 		result = append(result, fileEntry{Entry: e, Path: dirPath})
 	}
 	return result
+}
+
+func IsDir(filename string) bool {
+	fi, err := os.Stat(filename)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	if fi.Mode().IsDir() {
+		return true
+	}
+
+	return false
 }
