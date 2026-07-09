@@ -8,13 +8,18 @@ import (
 	"sync"
 )
 
-type FileEntry struct {
+type fileEntry struct {
 	Entry os.DirEntry
 	Path  string
 }
 
-func (f FileEntry) fullpath() string {
+func (f fileEntry) fullpath() string {
 	return filepath.Join(f.Path, f.Entry.Name())
+}
+
+type dirResult struct {
+	dirs  []fileEntry
+	files []fileEntry
 }
 
 const (
@@ -22,17 +27,17 @@ const (
 )
 
 var (
-	totalFiles int
+	totalFilesCounted int
 )
 
 func CountLinesRecursive(dirpath string) {
-	fileArr := make([]FileEntry, 0, 10)
+	fileArr := make([]fileEntry, 0, 10)
 	dirs := genFileArray(fileArr, getDirs(dirpath), RECURSION_LIMIT)
 
-	jobs := make(chan FileEntry, len(dirs))
+	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan int, len(dirs))
 
-	numWorkers := runtime.NumCPU()
+	numWorkers := runtime.NumCPU() / 2
 	var wg sync.WaitGroup
 
 	for range numWorkers {
@@ -60,7 +65,7 @@ func CountLinesRecursive(dirpath string) {
 		totalLines += r
 	}
 
-	fmt.Printf("%v lines were counted on %v files.\n", totalLines, totalFiles)
+	fmt.Printf("%v lines were counted on %v files.\n", totalLines, totalFilesCounted)
 }
 
 func countLinesOfFile(filename string) int {
@@ -87,20 +92,50 @@ func countLinesOfFile(filename string) int {
 		}
 	}
 
-	totalFiles++
+	totalFilesCounted++
 
 	return counter
 }
 
-func genFileArray(fileArr, dirArr []FileEntry, recLimit int) []FileEntry {
-	var nextDirArr []FileEntry
+func genFileArray(fileArr, dirArr []fileEntry, recLimit int) []fileEntry {
+	if len(dirArr) == 0 {
+		return fileArr
+	}
+
+	jobs := make(chan fileEntry, len(dirArr))
+	results := make(chan dirResult, len(dirArr))
+
+	numWorkers := runtime.NumCPU() / 2
+
+	var wg sync.WaitGroup
+	for range numWorkers {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for v := range jobs {
+				if v.Entry.IsDir() {
+					results <- dirResult{dirs: getDirs(v.fullpath())}
+				} else {
+					results <- dirResult{files: []fileEntry{v}}
+				}
+			}
+		}()
+	}
 
 	for _, v := range dirArr {
-		if v.Entry.IsDir() {
-			nextDirArr = append(nextDirArr, getDirs(v.fullpath())...)
-		} else {
-			fileArr = append(fileArr, v)
-		}
+		jobs <- v
+	}
+	close(jobs)
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	var nextDirArr []fileEntry
+	for r := range results {
+		fileArr = append(fileArr, r.files...)
+		nextDirArr = append(nextDirArr, r.dirs...)
 	}
 
 	if len(nextDirArr) > 0 && recLimit > 0 {
@@ -110,14 +145,14 @@ func genFileArray(fileArr, dirArr []FileEntry, recLimit int) []FileEntry {
 	return fileArr
 }
 
-func getDirs(dirPath string) []FileEntry {
+func getDirs(dirPath string) []fileEntry {
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
 		panic(err)
 	}
-	result := make([]FileEntry, 0, len(entries))
+	result := make([]fileEntry, 0, len(entries))
 	for _, e := range entries {
-		result = append(result, FileEntry{Entry: e, Path: dirPath})
+		result = append(result, fileEntry{Entry: e, Path: dirPath})
 	}
 	return result
 }
