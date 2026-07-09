@@ -50,27 +50,33 @@ func main() {
 		return
 	}
 
+	_, err := os.Stat(args[0])
+	if err != nil {
+		ansi.Red.FgPrintf("Error: %s, aborting.\n", err)
+		return
+	}
+
 	isDir := core.IsDir(args[0])
 
 	start := time.Now()
 	if isDir {
-		totalFilesCounted, totalLines, totalIgnoredFiles := core.CountLinesRecursive(args[0], config)
+		totalFilesCounted, totalLines, totalIgnoredFiles := core.ProgramEntry(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
 		fmt.Printf("%v files ignored.\n%v lines were counted on %v files.\n", totalIgnoredFiles, totalLines, totalFilesCounted)
 
 		if !config.NoStats {
+			fmt.Println("Stats:")
 			fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
-			fmt.Printf("Files counted :: %v\nRate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
-				totalFilesCounted, float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
+			fmt.Printf("Rate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
+				float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
 
-			totalRealFiles := totalFilesCounted + totalIgnoredFiles
-			fmt.Printf("With %v files ignored and %v real total files, the precision is :: %.2f",
-				totalIgnoredFiles, totalRealFiles, float64(totalFilesCounted*100)/float64(totalRealFiles))
+			fmt.Printf("Precision     :: %.2f%%\n",
+				float64(totalFilesCounted*100)/float64(totalFilesCounted + totalIgnoredFiles))
 		}
 
 	} else {
-		totalLines := core.CountLinesOfFile(args[0])
+		totalLines, _, _ := core.ProgramEntry(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
 		fmt.Printf("%v lines were counted on %v.\n", totalLines, filepath.Base(args[0]))

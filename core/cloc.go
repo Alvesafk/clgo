@@ -38,16 +38,24 @@ var (
 	totalIgnoredFiles int
 )
 
-func CountLinesRecursive(dirpath string, config Config) (int, int, int) {
-	fileArr := make([]fileEntry, 0, 10)
+func ProgramEntry(path string, config Config) (int, int ,int) {
+	if IsDir(path) {
+		fileArr := make([]fileEntry, 0, 10)
 
-	recursion := RECURSION_LIMIT
-	if config.NoRecursion {
-		recursion = 0
+		recursion := RECURSION_LIMIT
+		if config.NoRecursion {
+			recursion = 0
+		}
+
+		dirs := genFileArray(fileArr, getDirs(path), recursion, config)
+
+		return countLinesRecursive(dirs)
+	} else {
+		return countLinesOfFile(path), -1, -1
 	}
+}
 
-	dirs := genFileArray(fileArr, getDirs(dirpath), recursion, config)
-
+func countLinesRecursive(dirs []fileEntry) (int, int, int) {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan int, len(dirs))
 
@@ -59,7 +67,7 @@ func CountLinesRecursive(dirpath string, config Config) (int, int, int) {
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
-				results <- CountLinesOfFile(v.fullpath())
+				results <- countLinesOfFile(v.fullpath())
 			}
 		}()
 	}
@@ -82,7 +90,7 @@ func CountLinesRecursive(dirpath string, config Config) (int, int, int) {
 	return totalFilesCounted, totalLines, totalIgnoredFiles
 }
 
-func CountLinesOfFile(filename string) int {
+func countLinesOfFile(filename string) int {
 	if IsDir(filename) {
 		totalIgnoredFiles++
 		return 0
