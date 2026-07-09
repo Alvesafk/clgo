@@ -13,12 +13,21 @@ type FileEntry struct {
 	Path  string
 }
 
+func (f FileEntry) fullpath() string {
+	return filepath.Join(f.Path, f.Entry.Name())
+}
+
 const (
 	RECURSION_LIMIT = 20
 )
 
+var (
+	totalFiles int
+)
+
 func CountLinesRecursive(dirpath string) {
-	dirs := genFileArray(getDirs(dirpath), RECURSION_LIMIT)
+	fileArr := make([]FileEntry, 0, 10)
+	dirs := genFileArray(fileArr, getDirs(dirpath), RECURSION_LIMIT)
 
 	jobs := make(chan FileEntry, len(dirs))
 	results := make(chan int, len(dirs))
@@ -31,8 +40,7 @@ func CountLinesRecursive(dirpath string) {
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
-				absFilename := filepath.Join(v.Path, v.Entry.Name())
-				results <- countLinesOfFile(absFilename)
+				results <- countLinesOfFile(v.fullpath())
 			}
 		}()
 	}
@@ -52,9 +60,20 @@ func CountLinesRecursive(dirpath string) {
 		totalLines += r
 	}
 
-	fmt.Println(totalLines)
+	fmt.Printf("%v lines were counted on %v files.\n", totalLines, totalFiles)
 }
+
 func countLinesOfFile(filename string) int {
+	fi, err := os.Stat(filename)
+	if err != nil {
+		fmt.Println(err)
+		return 0
+	}
+
+	if fi.Mode().IsDir() {
+		return 0
+	}
+
 	file, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Println(err)
@@ -68,23 +87,27 @@ func countLinesOfFile(filename string) int {
 		}
 	}
 
+	totalFiles++
+
 	return counter
 }
 
-func genFileArray(arr []FileEntry, recLimit int) []FileEntry {
-	var dirFound int
-	for i, v := range arr {
+func genFileArray(fileArr, dirArr []FileEntry, recLimit int) []FileEntry {
+	var nextDirArr []FileEntry
+
+	for _, v := range dirArr {
 		if v.Entry.IsDir() {
-			fullPath := filepath.Join(v.Path, v.Entry.Name())
-			arr = append(arr, getDirs(fullPath)...)
-			arr = append(arr[:i], arr[i+1:]...)
-			dirFound++
+			nextDirArr = append(nextDirArr, getDirs(v.fullpath())...)
+		} else {
+			fileArr = append(fileArr, v)
 		}
 	}
-	if dirFound > 0 && recLimit > 0 {
-		arr = genFileArray(arr, recLimit-1)
+
+	if len(nextDirArr) > 0 && recLimit > 0 {
+		fileArr = genFileArray(fileArr, nextDirArr, recLimit-1)
 	}
-	return arr
+
+	return fileArr
 }
 
 func getDirs(dirPath string) []FileEntry {
