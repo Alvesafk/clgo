@@ -27,6 +27,9 @@ func init() {
 
 	flag.BoolVar(&config.NoStats, "noStats", false, "Disables stats after execution.")
 	flag.BoolVar(&config.NoStats, "ns", false, "Disables stats after execution.")
+
+	flag.BoolVar(&config.NoIgnoreDotFiles, "noIgnoreDotFiles", false, "Ignore files that start with a dot '.'.")
+	flag.BoolVar(&config.NoIgnoreDotFiles, "ni", false, "Ignore files that start with a dot '.'.")
 }
 
 func main() {

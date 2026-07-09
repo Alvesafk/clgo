@@ -5,12 +5,14 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 )
 
 type Config struct {
-	NoRecursion bool
-	NoStats     bool
+	NoRecursion      bool
+	NoStats          bool
+	NoIgnoreDotFiles bool
 }
 
 type fileEntry struct {
@@ -43,7 +45,7 @@ func CountLinesRecursive(dirpath string, config Config) (int, int) {
 		recursion = 0
 	}
 
-	dirs := genFileArray(fileArr, getDirs(dirpath), recursion)
+	dirs := genFileArray(fileArr, getDirs(dirpath), recursion, config)
 
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan int, len(dirs))
@@ -102,7 +104,7 @@ func CountLinesOfFile(filename string) int {
 	return counter
 }
 
-func genFileArray(fileArr, dirArr []fileEntry, recLimit int) []fileEntry {
+func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fileEntry {
 	if len(dirArr) == 0 {
 		return fileArr
 	}
@@ -118,6 +120,10 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int) []fileEntry {
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
+				if strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles {
+					continue
+				}
+
 				if v.Entry.IsDir() {
 					results <- dirResult{dirs: getDirs(v.fullpath())}
 				} else {
@@ -144,7 +150,7 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int) []fileEntry {
 	}
 
 	if len(nextDirArr) > 0 && recLimit > 0 {
-		fileArr = genFileArray(fileArr, nextDirArr, recLimit-1)
+		fileArr = genFileArray(fileArr, nextDirArr, recLimit-1, config)
 	}
 
 	return fileArr
