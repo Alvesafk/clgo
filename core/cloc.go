@@ -35,9 +35,10 @@ const (
 
 var (
 	totalFilesCounted int
+	totalIgnoredFiles int
 )
 
-func CountLinesRecursive(dirpath string, config Config) (int, int) {
+func CountLinesRecursive(dirpath string, config Config) (int, int, int) {
 	fileArr := make([]fileEntry, 0, 10)
 
 	recursion := RECURSION_LIMIT
@@ -78,18 +79,19 @@ func CountLinesRecursive(dirpath string, config Config) (int, int) {
 		totalLines += r
 	}
 
-	return totalFilesCounted, totalLines
+	return totalFilesCounted, totalLines, totalIgnoredFiles
 }
 
 func CountLinesOfFile(filename string) int {
 	if IsDir(filename) {
+		totalIgnoredFiles++
 		return 0
 	}
 
 	fileContent, err := os.ReadFile(filename)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		totalIgnoredFiles++
+		return 0
 	}
 
 	var counter int

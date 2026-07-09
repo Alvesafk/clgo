@@ -54,15 +54,19 @@ func main() {
 
 	start := time.Now()
 	if isDir {
-		totalFilesCounted, totalLines := core.CountLinesRecursive(args[0], config)
+		totalFilesCounted, totalLines, totalIgnoredFiles := core.CountLinesRecursive(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
-		fmt.Printf("%v lines were counted on %v files.\n", totalLines, totalFilesCounted)
+		fmt.Printf("%v files ignored.\n%v lines were counted on %v files.\n", totalIgnoredFiles, totalLines, totalFilesCounted)
 
 		if !config.NoStats {
 			fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
 			fmt.Printf("Files counted :: %v\nRate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
 				totalFilesCounted, float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
+
+			totalRealFiles := totalFilesCounted + totalIgnoredFiles
+			fmt.Printf("With %v files ignored and %v real total files, the precision is :: %.2f",
+				totalIgnoredFiles, totalRealFiles, float64(totalFilesCounted*100)/float64(totalRealFiles))
 		}
 
 	} else {
