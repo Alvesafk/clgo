@@ -81,14 +81,14 @@ func countLinesOfFile(filename string) int {
 		return 0
 	}
 
-	file, err := os.ReadFile(filename)
+	fileContent, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	var counter int
-	for _, c := range file {
+	for _, c := range fileContent {
 		if c == '\n' {
 			counter += 1
 		}
