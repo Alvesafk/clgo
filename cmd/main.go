@@ -104,12 +104,15 @@ func main() {
 }
 
 func usage() {
-	ansi.Green.FgPrintf("------------Clgo------------\n")
-	fmt.Printf("Usage instructions:\nclgo [options] <file / dir>\n\nFlags:\n--recursion / -r  :: Define recursion limit.\n--noStats   / -ns :: Disables stats after execution, only total lines will be showed.\n")
+	ansi.Green.FgPrintf("------------Clgo------------")
 
-	// "Usage instructions:\n"
-	// "clgo [options] <files>\n\n"
-	// "Flags:\n"
-	// "--recursion / -r  :: Define recursion limit.\n"
-	// "--noStats   / -ns :: Disables stats after execution, only total lines will be showed.\n"
+	usageMsg := `
+Usage instructions:
+clgo [options] <files>
+
+Flags:\n
+--recursion / -r  :: Define recursion limit.
+--noStats   / -ns :: Disables stats after execution, only total lines will be showed.`
+
+	fmt.Println(usageMsg)
 }
