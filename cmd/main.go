@@ -28,10 +28,6 @@ func init() {
 	flag.BoolVar(&help, "help", false, "Show usage")
 	flag.BoolVar(&help, "h", false, "Show usage")
 
-	// No recursion flag, disables recursion so only one dir will be counted.
-	flag.BoolVar(&config.NoRecursion, "noRecursion", false, "Disables recursion, therefore only the first directory will be used.")
-	flag.BoolVar(&config.NoRecursion, "nr", false, "Disables recursion, therefore only the first directory will be used.")
-
 	// No stats flag, disable the stats after line print.
 	flag.BoolVar(&config.NoStats, "noStats", false, "Disables stats after execution.")
 	flag.BoolVar(&config.NoStats, "ns", false, "Disables stats after execution.")
@@ -40,6 +36,12 @@ func init() {
 	// with a dot, ".".
 	flag.BoolVar(&config.NoIgnoreDotFiles, "noIgnoreDotFiles", false, "Ignore files that start with a dot '.'.")
 	flag.BoolVar(&config.NoIgnoreDotFiles, "ni", false, "Ignore files that start with a dot '.'.")
+
+	// Recursion flag defines the recursion limit, it will use the default defined on 
+	// core pkg if it doesn't get passed.
+	flag.IntVar(&config.Recursion, "recursion", core.RECURSION_LIMIT, "Define recursion limit.")
+	flag.IntVar(&config.Recursion, "r", core.RECURSION_LIMIT, "Define recursion limit.")
+
 }
 
 func main() {
@@ -103,11 +105,11 @@ func main() {
 
 func usage() {
 	ansi.Green.FgPrintf("------------Clgo------------\n")
-	fmt.Printf("Usage instructions:\nclgo [options] <file / dir>\n\nFlags:\n--noRecursion / -nr :: Disables recursion, only the first dir will be used.\n--noStats     / -ns :: Disables stats after execution, only total lines will be showed.\n")
+	fmt.Printf("Usage instructions:\nclgo [options] <file / dir>\n\nFlags:\n--recursion / -r  :: Define recursion limit.\n--noStats   / -ns :: Disables stats after execution, only total lines will be showed.\n")
 
 	// "Usage instructions:\n"
 	// "clgo [options] <files>\n\n"
 	// "Flags:\n"
-	// "--noRecursion / -nr :: Disables recursion, only the first dir will be used.\n"
-	// "--noStats / -ns     :: Disables stats after execution, only total lines will be showed.\n"
+	// "--recursion / -r  :: Define recursion limit.\n"
+	// "--noStats   / -ns :: Disables stats after execution, only total lines will be showed.\n"
 }

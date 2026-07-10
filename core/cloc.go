@@ -16,9 +16,9 @@ import (
 
 // Config struct for optional flags defined in main.go.
 type Config struct {
-	NoRecursion      bool
 	NoStats          bool
 	NoIgnoreDotFiles bool
+	Recursion        int
 }
 
 // fileEntry struct has the actual os.DirEntry and the path of the file.
@@ -50,14 +50,11 @@ var (
 // ProgramEntry function receives a path string and a config struct, it returns 3 ints in
 // order: total amount of files counted, total lines counted and total ignored files. The
 // function manages if path that was passed is of a directory or if is from a normal file.
-func ProgramEntry(path string, config Config) (int, int ,int) {
+func ProgramEntry(path string, config Config) (int, int, int) {
 	if IsDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
 
-		recursion := RECURSION_LIMIT
-		if config.NoRecursion {
-			recursion = 0
-		}
+		recursion := config.Recursion
 
 		dirs := genFileArray(fileArr, getDirs(path), recursion, config)
 
