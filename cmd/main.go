@@ -74,10 +74,11 @@ func main() {
 
 	start := time.Now()
 	if isDir {
-		totalFilesCounted, totalLines, totalIgnoredFiles := core.ProgramEntry(args[0], config)
+		totalFilesCounted, totalLines, totalIgnoredFiles, totalBlankLines := core.ProgramEntry(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
-		fmt.Printf("%v files ignored.\n%v lines were counted on %v files.\n", totalIgnoredFiles, totalLines, totalFilesCounted)
+		fmt.Printf("Skipped %v files.\n%v lines were counted on %v files.\n", totalIgnoredFiles, totalLines, totalFilesCounted)
+		fmt.Printf("%v blank lines.\n", totalBlankLines)
 
 		if !config.NoStats {
 			fmt.Println("Stats:")
@@ -90,10 +91,11 @@ func main() {
 		}
 
 	} else {
-		totalLines, _, _ := core.ProgramEntry(args[0], config)
+		totalLines, _, _, totalBlankLines:= core.ProgramEntry(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
 		fmt.Printf("%v lines were counted on %v.\n", totalLines, filepath.Base(args[0]))
+		fmt.Printf("%v blank lines.\n", totalBlankLines)
 
 		if !config.NoStats {
 			fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)

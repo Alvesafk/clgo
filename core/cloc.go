@@ -6,6 +6,7 @@ Core package has the business logic of clgo.
 package core
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"os"
@@ -46,12 +47,13 @@ const (
 var (
 	totalFilesCounted int
 	totalSkippedFiles int
+	totalBlankLines   int
 )
 
 // ProgramEntry function receives a path string and a config struct, it returns 3 ints in
 // order: total amount of files counted, total lines counted and total ignored files. The
 // function manages if path that was passed is of a directory or if is from a normal file.
-func ProgramEntry(path string, config Config) (int, int, int) {
+func ProgramEntry(path string, config Config) (int, int, int, int) {
 	if IsDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
 
@@ -61,13 +63,13 @@ func ProgramEntry(path string, config Config) (int, int, int) {
 
 		return countLinesRecursive(dirs)
 	} else {
-		return countLinesOfFile(path), -1, -1
+		return countLinesOfFile(path), -1, -1, totalBlankLines
 	}
 }
 
 // countLinesRecursive function count the lines of a file arrays, it uses concorrency, the
 // function create workers to count the lines of each directory file concorrently.
-func countLinesRecursive(dirs []fileEntry) (int, int, int) {
+func countLinesRecursive(dirs []fileEntry) (int, int, int, int) {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan int, len(dirs))
 
@@ -99,7 +101,7 @@ func countLinesRecursive(dirs []fileEntry) (int, int, int) {
 		totalLines += r
 	}
 
-	return totalFilesCounted, totalLines, totalSkippedFiles
+	return totalFilesCounted, totalLines, totalSkippedFiles, totalBlankLines
 }
 
 // countLinesOfFile function count all the lines of a file passed into it.
@@ -109,17 +111,27 @@ func countLinesOfFile(filename string) int {
 		return 0
 	}
 
-	fileContent, err := os.ReadFile(filename)
+	file, err := os.Open(filename)
 	if err != nil {
 		totalSkippedFiles++
 		return 0
 	}
+	defer file.Close()
 
 	var counter int
-	for _, c := range fileContent {
-		if c == '\n' {
-			counter += 1
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.TrimSpace(line) == "" {
+			totalBlankLines++
+			continue
 		}
+		counter++
+	}
+
+	if err := scanner.Err(); err != nil {
+		totalSkippedFiles++
+		return 0
 	}
 
 	totalFilesCounted++
