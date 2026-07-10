@@ -161,7 +161,7 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 	}
 	defer file.Close()
 
-	language := languageFromExt(filepath.Ext(filename))
+	language := languageFromExt(filename)
 	markers, hasSyntax := commentSyntax[language]
 
 	stats := fileStats{Language: language}
@@ -215,7 +215,15 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 
 // Returns name of the lang after comparing it to the suffix map, if not found returns
 // "Unknown"
-func languageFromExt(ext string) string {
+func languageFromExt(filename string) string {
+	// TODO :: Better exception handling with the names.
+	baseName := filepath.Base(filename)
+	if baseName == "Makefile" || baseName == "makefile" {
+		return "Makefile"
+	}
+
+	ext := filepath.Ext(filename)
+
 	if lang, ok := extToLanguage[ext]; ok {
 		return lang
 	}
