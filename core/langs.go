@@ -33,8 +33,6 @@ var extToLanguage = map[string]string{
 	".ex":    "Elixir",
 	".cljs":  "Clojure",
 	".clj":   "Clojure",
-	".pl":    "Perl",
-	".pm":    "Perl",
 	".r":     "R",
 	".dart":  "Dart",
 	".css":   "CSS",
@@ -50,6 +48,15 @@ var extToLanguage = map[string]string{
 	".s":     "Assembly",
 	".S":     "Assembly",
 	".mk":    "Makefile",
+	".pl":    "Perl",
+	".pm":    "Perl",
+	".t":     "Perl",
+	".pod":   "Perl",
+	".plx":   "Perl",
+	".perl":  "Perl",
+	".al":    "Perl",
+	".psgi":  "Perl",
+	".cgi":   "Perl",
 }
 
 // Defining the comment semantics of the languages.

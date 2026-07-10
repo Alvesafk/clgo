@@ -89,11 +89,11 @@ func main() {
 		if !config.NoStats {
 			fmt.Println(" Stats:")
 			fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
-			fmt.Printf(" Rate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
+			fmt.Printf(" Rate of Files :: %.2f/s\n Rate of Lines :: %.2f/s\n",
 				float64(totalFilesCounted)/totalTime, float64(getTotalLines(stats))/totalTime)
 
-			fmt.Printf("Precision     :: %.2f%%\n",
-				float64(totalFilesCounted*100)/float64(totalFilesCounted+totalIgnoredFiles))
+			fmt.Printf(" Skipped Files :: %v\n Precision     :: %.2f%%\n",
+				totalIgnoredFiles, float64(totalFilesCounted*100)/float64(totalFilesCounted+totalIgnoredFiles))
 		}
 
 	} else {
