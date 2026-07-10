@@ -40,6 +40,26 @@ type dirResult struct {
 	files []fileEntry
 }
 
+type fileStats struct {
+	Language     string
+	CodeLines    int
+	CommentLines int
+	BlankLines   int
+}
+
+type LanguageStats struct {
+	Files        int
+	CodeLines    int
+	CommentLines int
+	BlankLines   int
+}
+
+type commentMarkers struct {
+	Line  string
+	Open  string
+	Close string
+}
+
 const (
 	RECURSION_LIMIT = 20 // Limit for recursion.
 )
@@ -47,13 +67,47 @@ const (
 var (
 	totalFilesCounted int
 	totalSkippedFiles int
-	totalBlankLines   int
 )
+
+var extToLanguage = map[string]string{
+	".go":   "Go",
+	".c":    "C",
+	".h":    "C",
+	".cpp":  "C++",
+	".hpp":  "C++",
+	".js":   "JavaScript",
+	".ts":   "TypeScript",
+	".java": "Java",
+	".py":   "Python",
+	".sh":   "Shell",
+	".sql":  "SQL",
+	".html": "HTML",
+	".htm":  "HTML",
+	".rb":   "Ruby",
+	".lua":  "Lua",
+	".rs":   "Rust",
+}
+
+var commentSyntax = map[string]commentMarkers{
+	"Go":         {Line: "//", Open: "/*", Close: "*/"},
+	"C":          {Line: "//", Open: "/*", Close: "*/"},
+	"C++":        {Line: "//", Open: "/*", Close: "*/"},
+	"JavaScript": {Line: "//", Open: "/*", Close: "*/"},
+	"TypeScript": {Line: "//", Open: "/*", Close: "*/"},
+	"Java":       {Line: "//", Open: "/*", Close: "*/"},
+	"Python":     {Line: "#"},
+	"Shell":      {Line: "#"},
+	"SQL":        {Line: "--", Open: "/*", Close: "*/"},
+	"HTML":       {Open: "<!--", Close: "-->"},
+	"Ruby":       {Line: "#"},
+	"Lua":        {Line: "--", Open: "--[[", Close: "]]"},
+	"Rust":       {Line: "//"},
+}
 
 // ProgramEntry function receives a path string and a config struct, it returns 3 ints in
 // order: total amount of files counted, total lines counted and total ignored files. The
 // function manages if path that was passed is of a directory or if is from a normal file.
-func ProgramEntry(path string, config Config) (int, int, int, int) {
+func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, int) {
 	if IsDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
 
@@ -62,16 +116,28 @@ func ProgramEntry(path string, config Config) (int, int, int, int) {
 		dirs := genFileArray(fileArr, getDirs(path), recursion, config)
 
 		return countLinesRecursive(dirs)
-	} else {
-		return countLinesOfFile(path), -1, -1, totalBlankLines
 	}
+
+	languages := make(map[string]LanguageStats)
+
+	stats, ok := countLinesOfFile(path)
+	if ok {
+		languages[stats.Language] = LanguageStats{
+			Files:        1,
+			CodeLines:    stats.CodeLines,
+			CommentLines: stats.CommentLines,
+			BlankLines:   stats.BlankLines,
+		}
+	}
+
+	return languages, totalFilesCounted, totalSkippedFiles
 }
 
 // countLinesRecursive function count the lines of a file arrays, it uses concorrency, the
 // function create workers to count the lines of each directory file concorrently.
-func countLinesRecursive(dirs []fileEntry) (int, int, int, int) {
+func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) {
 	jobs := make(chan fileEntry, len(dirs))
-	results := make(chan int, len(dirs))
+	results := make(chan fileStats, len(dirs))
 
 	numWorkers := runtime.NumCPU() / 2
 	var wg sync.WaitGroup
@@ -81,7 +147,9 @@ func countLinesRecursive(dirs []fileEntry) (int, int, int, int) {
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
-				results <- countLinesOfFile(v.fullpath())
+				if stats, ok := countLinesOfFile(v.fullpath()); ok {
+					results <- stats
+				}
 			}
 		}()
 	}
@@ -96,47 +164,91 @@ func countLinesRecursive(dirs []fileEntry) (int, int, int, int) {
 		close(results)
 	}()
 
-	var totalLines int
+	languages := make(map[string]LanguageStats)
 	for r := range results {
-		totalLines += r
+		lang := languages[r.Language]
+		lang.Files++
+		lang.CodeLines += r.CodeLines
+		lang.CommentLines += r.CommentLines
+		lang.BlankLines += r.BlankLines
+		languages[r.Language] = lang
 	}
 
-	return totalFilesCounted, totalLines, totalSkippedFiles, totalBlankLines
+	return languages, totalFilesCounted, totalSkippedFiles
 }
 
 // countLinesOfFile function count all the lines of a file passed into it.
-func countLinesOfFile(filename string) int {
+func countLinesOfFile(filename string) (fileStats, bool) {
 	if IsDir(filename) {
 		totalSkippedFiles++
-		return 0
+		return fileStats{}, false
 	}
 
 	file, err := os.Open(filename)
 	if err != nil {
 		totalSkippedFiles++
-		return 0
+		return fileStats{}, false
 	}
 	defer file.Close()
 
-	var counter int
+	language := languageFromExt(filepath.Ext(filename))
+	markers, hasSyntax := commentSyntax[language]
+
+	stats := fileStats{Language: language}
+	var insideBlock bool
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		if strings.TrimSpace(line) == "" {
-			totalBlankLines++
+		trimmed := strings.TrimSpace(line)
+
+		if trimmed == "" {
+			stats.BlankLines++
 			continue
 		}
-		counter++
+
+		if hasSyntax {
+			if insideBlock {
+				stats.CommentLines++
+				if markers.Close != "" && strings.Contains(trimmed, markers.Close) {
+					insideBlock = false
+				}
+				continue
+			}
+
+			if markers.Open != "" && strings.HasPrefix(trimmed, markers.Open) {
+				stats.CommentLines++
+				if !strings.Contains(trimmed, markers.Close) {
+					insideBlock = true
+				}
+				continue
+			}
+
+			if markers.Line != "" && strings.HasPrefix(trimmed, markers.Line) {
+				stats.CommentLines++
+				continue
+			}
+		}
+
+		stats.CodeLines++
 	}
 
 	if err := scanner.Err(); err != nil {
 		totalSkippedFiles++
-		return 0
+		return fileStats{}, false
 	}
 
 	totalFilesCounted++
 
-	return counter
+	return stats, true
+}
+
+func languageFromExt(ext string) string {
+	if lang, ok := extToLanguage[ext]; ok {
+		return lang
+	}
+
+	return "Unknown"
 }
 
 // genFileArray function get all the files of a dir and subdir using a slice of fileEntry
