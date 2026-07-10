@@ -37,7 +37,7 @@ func init() {
 	flag.BoolVar(&config.NoIgnoreDotFiles, "noIgnoreDotFiles", false, "Ignore files that start with a dot '.'.")
 	flag.BoolVar(&config.NoIgnoreDotFiles, "ni", false, "Ignore files that start with a dot '.'.")
 
-	// Recursion flag defines the recursion limit, it will use the default defined on 
+	// Recursion flag defines the recursion limit, it will use the default defined on
 	// core pkg if it doesn't get passed.
 	flag.IntVar(&config.Recursion, "recursion", core.RECURSION_LIMIT, "Define recursion limit.")
 	flag.IntVar(&config.Recursion, "r", core.RECURSION_LIMIT, "Define recursion limit.")
@@ -86,7 +86,7 @@ func main() {
 				float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
 
 			fmt.Printf("Precision     :: %.2f%%\n",
-				float64(totalFilesCounted*100)/float64(totalFilesCounted + totalIgnoredFiles))
+				float64(totalFilesCounted*100)/float64(totalFilesCounted+totalIgnoredFiles))
 		}
 
 	} else {

@@ -6,6 +6,7 @@ Core package has the business logic of clgo.
 package core
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -44,7 +45,7 @@ const (
 
 var (
 	totalFilesCounted int
-	totalIgnoredFiles int
+	totalSkippedFiles int
 )
 
 // ProgramEntry function receives a path string and a config struct, it returns 3 ints in
@@ -98,19 +99,19 @@ func countLinesRecursive(dirs []fileEntry) (int, int, int) {
 		totalLines += r
 	}
 
-	return totalFilesCounted, totalLines, totalIgnoredFiles
+	return totalFilesCounted, totalLines, totalSkippedFiles
 }
 
 // countLinesOfFile function count all the lines of a file passed into it.
 func countLinesOfFile(filename string) int {
 	if IsDir(filename) {
-		totalIgnoredFiles++
+		totalSkippedFiles++
 		return 0
 	}
 
 	fileContent, err := os.ReadFile(filename)
 	if err != nil {
-		totalIgnoredFiles++
+		totalSkippedFiles++
 		return 0
 	}
 
@@ -145,7 +146,7 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fi
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
-				if strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles {
+				if isBin, _ := isBinary(v.fullpath()); strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles || isBin {
 					continue
 				}
 
@@ -196,8 +197,8 @@ func getDirs(dirPath string) []fileEntry {
 }
 
 // IsDir function returns true if path string is == the path of a directory.
-func IsDir(filename string) bool {
-	fi, err := os.Stat(filename)
+func IsDir(path string) bool {
+	fi, err := os.Stat(path)
 	if err != nil {
 		fmt.Println(err)
 		return false
@@ -208,4 +209,23 @@ func IsDir(filename string) bool {
 	}
 
 	return false
+}
+
+// isBinary function returns true if path string is the path of a binary file,
+// the function checks for a "0x00" byte insede the first 8000 bytes, it's how
+// git does this.
+func isBinary(path string) (bool, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return false, err
+	}
+	defer f.Close()
+
+	buf := make([]byte, 8000)
+	n, err := f.Read(buf)
+	if err != nil && n == 0 {
+		return false, err
+	}
+
+	return bytes.IndexByte(buf[:n], 0) != -1, nil
 }
