@@ -72,9 +72,9 @@ var (
 var extToLanguage = map[string]string{
 	".go":   "Go",
 	".c":    "C",
-	".h":    "C",
+	".h":    "C Headers",
 	".cpp":  "C++",
-	".hpp":  "C++",
+	".hpp":  "C++ Headers",
 	".js":   "JavaScript",
 	".ts":   "TypeScript",
 	".java": "Java",
@@ -86,6 +86,8 @@ var extToLanguage = map[string]string{
 	".rb":   "Ruby",
 	".lua":  "Lua",
 	".rs":   "Rust",
+	".txt":  "Text",
+	".md":   "Markdown",
 }
 
 var commentSyntax = map[string]commentMarkers{

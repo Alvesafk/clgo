@@ -74,32 +74,36 @@ func main() {
 
 	start := time.Now()
 	if isDir {
-		totalFilesCounted, totalLines, totalIgnoredFiles, totalBlankLines := core.ProgramEntry(args[0], config)
+		stats, totalFilesCounted, totalIgnoredFiles := core.ProgramEntry(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
-		fmt.Printf("Skipped %v files.\n%v lines were counted on %v files.\n", totalIgnoredFiles, totalLines, totalFilesCounted)
-		fmt.Printf("%v blank lines.\n", totalBlankLines)
+		printStats(stats)
+
+		fmt.Printf("Skipped %v files.\n%v lines were counted on %v files.\n", totalIgnoredFiles, getTotalLines(stats), totalFilesCounted)
+		fmt.Printf("%v blank lines.\n", getTotalBlankLines(stats))
 
 		if !config.NoStats {
 			fmt.Println("Stats:")
 			fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
 			fmt.Printf("Rate of Files :: %.2f/s\nRate of Lines :: %.2f/s\n",
-				float64(totalFilesCounted)/totalTime, float64(totalLines)/totalTime)
+				float64(totalFilesCounted)/totalTime, float64(getTotalLines(stats))/totalTime)
 
 			fmt.Printf("Precision     :: %.2f%%\n",
 				float64(totalFilesCounted*100)/float64(totalFilesCounted+totalIgnoredFiles))
 		}
 
 	} else {
-		totalLines, _, _, totalBlankLines:= core.ProgramEntry(args[0], config)
+		stats, _, _ := core.ProgramEntry(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
-		fmt.Printf("%v lines were counted on %v.\n", totalLines, filepath.Base(args[0]))
-		fmt.Printf("%v blank lines.\n", totalBlankLines)
+		printStats(stats)
+
+		fmt.Printf("%v lines were counted on %v.\n", getTotalLines(stats), filepath.Base(args[0]))
+		fmt.Printf("%v blank lines.\n", getTotalBlankLines(stats))
 
 		if !config.NoStats {
 			fmt.Printf("Time elapsed  :: %.6f seconds.\n", totalTime)
-			fmt.Printf("Rate of Lines :: %.2f/s\n", float64(totalLines)/totalTime)
+			fmt.Printf("Rate of Lines :: %.2f/s\n", float64(getTotalLines(stats))/totalTime)
 
 		}
 	}
@@ -117,4 +121,30 @@ Flags:\n
 --noStats   / -ns :: Disables stats after execution, only total lines will be showed.`
 
 	fmt.Println(usageMsg)
+}
+
+func getTotalLines(m map[string]core.LanguageStats) (result int) {
+	for _, v := range m {
+		result += v.CodeLines + v.BlankLines + v.CommentLines
+	}
+
+	return
+}
+
+func getTotalBlankLines(m map[string]core.LanguageStats) (result int) {
+	for _, v := range m {
+		result += v.BlankLines
+	}
+
+	return
+}
+
+func printStats(m map[string]core.LanguageStats) {
+	ansi.Green.FgPrintln("------------Stats------------")
+	
+	for k, v := range m {
+		fmt.Println(k)
+		fmt.Printf(":: Files: %v, Code Lines: %v, Comment Lines: %v, Blank Lines: %v.\n", v.Files, v.CodeLines, v.CommentLines, v.BlankLines)
+		fmt.Println()
+	}
 }
