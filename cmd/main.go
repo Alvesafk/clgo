@@ -123,6 +123,7 @@ Flags:\n
 	fmt.Println(usageMsg)
 }
 
+// Get total amount of lines parsed.
 func getTotalLines(m map[string]core.LanguageStats) (result int) {
 	for _, v := range m {
 		result += v.CodeLines + v.BlankLines + v.CommentLines
@@ -131,6 +132,7 @@ func getTotalLines(m map[string]core.LanguageStats) (result int) {
 	return
 }
 
+// Get total amount of blank lines.
 func getTotalBlankLines(m map[string]core.LanguageStats) (result int) {
 	for _, v := range m {
 		result += v.BlankLines

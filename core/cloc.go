@@ -40,6 +40,7 @@ type dirResult struct {
 	files []fileEntry
 }
 
+// fileStats struct represent stats from a file.
 type fileStats struct {
 	Language     string
 	CodeLines    int
@@ -47,6 +48,8 @@ type fileStats struct {
 	BlankLines   int
 }
 
+// LanguageStats is the main struct passed to main, it has the total of files, code lines,
+// comment lines and blank lines.
 type LanguageStats struct {
 	Files        int
 	CodeLines    int
@@ -54,6 +57,8 @@ type LanguageStats struct {
 	BlankLines   int
 }
 
+// comment markers represents how a comment is defined in a language, it's one liner and
+// multi line variants.
 type commentMarkers struct {
 	Line  string
 	Open  string
@@ -69,6 +74,7 @@ var (
 	totalSkippedFiles int
 )
 
+// map used to get the language of the parsed files based on the suffix.
 var extToLanguage = map[string]string{
 	".go":   "Go",
 	".c":    "C",
@@ -90,6 +96,7 @@ var extToLanguage = map[string]string{
 	".md":   "Markdown",
 }
 
+// Defining the comment semantics of the languages.
 var commentSyntax = map[string]commentMarkers{
 	"Go":         {Line: "//", Open: "/*", Close: "*/"},
 	"C":          {Line: "//", Open: "/*", Close: "*/"},
@@ -106,9 +113,9 @@ var commentSyntax = map[string]commentMarkers{
 	"Rust":       {Line: "//"},
 }
 
-// ProgramEntry function receives a path string and a config struct, it returns 3 ints in
-// order: total amount of files counted, total lines counted and total ignored files. The
-// function manages if path that was passed is of a directory or if is from a normal file.
+// ProgramEntry function receives a path string and a config struct, it returns a map and
+// two ints, the map is LanguageStats map with the stats of all parsed files, the two ints
+// are: total files counted and total skipped files.
 func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, int) {
 	if IsDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
@@ -135,7 +142,7 @@ func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, in
 	return languages, totalFilesCounted, totalSkippedFiles
 }
 
-// countLinesRecursive function count the lines of a file arrays, it uses concorrency, the
+// countLinesRecursive function count the lines of a file slice, it uses concorrency, the
 // function create workers to count the lines of each directory file concorrently.
 func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) {
 	jobs := make(chan fileEntry, len(dirs))
@@ -179,7 +186,7 @@ func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) 
 	return languages, totalFilesCounted, totalSkippedFiles
 }
 
-// countLinesOfFile function count all the lines of a file passed into it.
+// countLinesOfFile function parse a file couting it's code, blank and comment lines.
 func countLinesOfFile(filename string) (fileStats, bool) {
 	if IsDir(filename) {
 		totalSkippedFiles++
@@ -245,6 +252,8 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 	return stats, true
 }
 
+// Returns name of the lang after comparing it to the suffix map, if not found returns
+// "Unknown"
 func languageFromExt(ext string) string {
 	if lang, ok := extToLanguage[ext]; ok {
 		return lang
