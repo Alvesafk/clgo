@@ -63,7 +63,9 @@ var extToLanguage = map[string]string{
 var commentSyntax = map[string]commentMarkers{
 	"Go":          {Line: "//", Open: "/*", Close: "*/"},
 	"C":           {Line: "//", Open: "/*", Close: "*/"},
+	"C Headers":   {Line: "//", Open: "/*", Close: "*/"},
 	"C++":         {Line: "//", Open: "/*", Close: "*/"},
+	"C++ Headers": {Line: "//", Open: "/*", Close: "*/"},
 	"JavaScript":  {Line: "//", Open: "/*", Close: "*/"},
 	"TypeScript":  {Line: "//", Open: "/*", Close: "*/"},
 	"Java":        {Line: "//", Open: "/*", Close: "*/"},
