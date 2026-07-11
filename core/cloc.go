@@ -60,7 +60,7 @@ type LanguageStats struct {
 // comment markers represents how a comment is defined in a language, it's one liner and
 // multi line variants.
 type commentMarkers struct {
-	Line  string
+	Line  []string
 	Open  string
 	Close string
 }
@@ -194,7 +194,7 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 				continue
 			}
 
-			if markers.Line != "" && strings.HasPrefix(trimmed, markers.Line) {
+			if len(markers.Line) > 0 && checkCommentPrefix(trimmed, markers)  {
 				stats.CommentLines++
 				continue
 			}
@@ -332,4 +332,14 @@ func isBinary(path string) (bool, error) {
 	}
 
 	return bytes.IndexByte(buf[:n], 0) != -1, nil
+}
+
+func checkCommentPrefix(trimmed string, markers commentMarkers) bool {
+	for _, v := range markers.Line {
+		if strings.HasPrefix(trimmed, v) {
+			return true
+		}
+	}
+
+	return false
 }
