@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 )
@@ -150,7 +151,10 @@ func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) 
 // countLinesOfFile function parse a file couting it's code, blank and comment lines.
 func countLinesOfFile(filename string) (fileStats, bool) {
 	if IsDir(filename) {
-		totalSkippedFiles++
+		return fileStats{}, false
+	}
+
+	if slices.Contains(filenameToIgnore, filepath.Base(filename)) {
 		return fileStats{}, false
 	}
 
@@ -161,7 +165,11 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 	}
 	defer file.Close()
 
-	language := languageFromExt(filename)
+	language, ignore := languageFromExt(filename)
+	if ignore {
+		return fileStats{}, false
+	}
+
 	markers, hasSyntax := commentSyntax[language]
 
 	stats := fileStats{Language: language}
@@ -194,7 +202,7 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 				continue
 			}
 
-			if len(markers.Line) > 0 && checkCommentPrefix(trimmed, markers)  {
+			if len(markers.Line) > 0 && checkCommentPrefix(trimmed, markers) {
 				stats.CommentLines++
 				continue
 			}
@@ -215,20 +223,27 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 
 // Returns name of the lang after comparing it to the suffix map, if not found returns
 // "Unknown"
-func languageFromExt(filename string) string {
-	// TODO :: Better exception handling with the names.
+func languageFromExt(filename string) (string, bool) {
 	baseName := filepath.Base(filename)
-	if baseName == "Makefile" || baseName == "makefile" {
-		return "Makefile"
-	}
 
 	ext := filepath.Ext(filename)
+	if !strings.Contains(ext, ".") {
+		if file, ok := filenameException[baseName]; ok {
+			return file, false
+		}
 
-	if lang, ok := extToLanguage[ext]; ok {
-		return lang
+		return "Unknown", false
 	}
 
-	return "Unknown"
+	if slices.Contains(extToIgnore, ext) {
+		return "", true
+	}
+
+	if lang, ok := extToLanguage[ext]; ok {
+		return lang, false
+	}
+
+	return "Unknown", false
 }
 
 // genFileArray function get all the files of a dir and subdir using a slice of fileEntry

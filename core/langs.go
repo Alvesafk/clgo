@@ -98,3 +98,17 @@ var commentSyntax = map[string]commentMarkers{
 	"Ini":         {Line: []string{";", "#"}},
 	"Objective-C": {Line: []string{"%"}, Open: "%{", Close: "}%"},
 }
+
+var extToIgnore = []string{
+	".mod",
+	".sum",
+}
+
+var filenameException = map[string]string{
+	"Makefile": "Makefile",
+	"makefile": "Makefile",
+}
+
+var filenameToIgnore = []string{
+	"LICENSE",
+}

@@ -25,7 +25,7 @@ var (
 )
 
 type kv struct {
-	Key string
+	Key   string
 	Value core.LanguageStats
 }
 
@@ -167,7 +167,7 @@ func printStatsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCount
 	t.SetStyle(table.StyleLight)
 
 	t.AppendHeader(table.Row{"Lang", "Files", "Blank", "Comment", "Code"})
-	
+
 	for _, v := range mSlice {
 		t.AppendRow(table.Row{v.Key, v.Value.Files, v.Value.BlankLines, v.Value.CommentLines, v.Value.CodeLines})
 	}
@@ -184,7 +184,7 @@ func printStatsFile(m map[string]core.LanguageStats) {
 	t.SetStyle(table.StyleLight)
 
 	t.AppendHeader(table.Row{"Lang", "Blank", "Comment", "Code"})
-	
+
 	for k, v := range m {
 		t.AppendRow(table.Row{k, v.BlankLines, v.CommentLines, v.CodeLines})
 	}
