@@ -9,6 +9,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -167,6 +168,18 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 
 	language, ignore := languageFromExt(filename)
 	if ignore {
+		return fileStats{}, false
+	}
+
+	buf := make([]byte, 100)
+	file.Read(buf)
+	if lTmp, ok := shebangLangs(buf); ok {
+		language = lTmp
+	}
+
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		totalSkippedFiles++
 		return fileStats{}, false
 	}
 
@@ -357,4 +370,19 @@ func checkCommentPrefix(trimmed string, markers commentMarkers) bool {
 	}
 
 	return false
+}
+
+func shebangLangs(line []byte) (string, bool) {
+	switch l := string(line); {
+	case strings.Contains(l, "#!/usr/bin/env perl"):
+		return "Perl", true
+	case strings.Contains(l, "#!/usr/bin/bash"):
+		return "Bash", true
+	case strings.Contains(l, "#!/usr/bin/zsh"):
+		return "Zsh", true
+	case strings.Contains(l, "#!/usr/bin/fish"):
+		return "Fish", true
+	default:
+		return "Unknown", false
+	}
 }
