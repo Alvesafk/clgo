@@ -14,7 +14,7 @@ You can build it from source:
 ```sh
 git clone https://github.com/Alvesafk/clgo --depth=1
 cd clgo
-go build -o bin/clgo cmd/main.go
+go build -o bin/clgo .
 ```
 After this, you can put the binary on you `$PATH`.
 
