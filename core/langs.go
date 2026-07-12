@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2026 Alvesafk. All Rights Reserved.
+
+langs.go has maps and slices that are used to identify the language and/or file.
+*/
 package core
 
 // map used to get the language of the parsed files based on the suffix.
