@@ -22,16 +22,16 @@ type kv struct {
 
 // Prints usage info.
 func usage() {
-	ansi.Green.FgPrintf("------------Clgo------------")
-
 	usageMsg := `
 Usage instructions:
 clgo [options] <files>
 
 Flags:\n
---recursion / -r  :: Define recursion limit.
---noStats   / -ns :: Disables stats after execution, only total lines will be showed.`
+--recursion       / -r  :: Define recursion limit.
+--noStats         / -ns :: Disables stats after execution, only total lines will be showed.
+--noConcurrency   / -nc :: Use non-concurrent functions`
 
+	ansi.Green.FgPrintf("------------Clgo------------")
 	fmt.Println(usageMsg)
 }
 

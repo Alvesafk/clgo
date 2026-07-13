@@ -36,6 +36,9 @@ func init() {
 	flag.BoolVar(&config.NoIgnoreDotFiles, "noIgnoreDotFiles", false, "Ignore files that start with a dot '.'.")
 	flag.BoolVar(&config.NoIgnoreDotFiles, "ni", false, "Ignore files that start with a dot '.'.")
 
+	flag.BoolVar(&config.NoConcurrency, "noConcurrency", false, "Use non-concurrent functions.")
+	flag.BoolVar(&config.NoConcurrency, "nc", false, "Use non-concurrent functions.")
+
 	// Recursion flag defines the recursion limit, it will use the default defined on
 	// core pkg if it doesn't get passed.
 	flag.IntVar(&config.Recursion, "recursion", core.RECURSION_LIMIT, "Define recursion limit.")

@@ -22,6 +22,7 @@ import (
 type Config struct {
 	NoStats          bool
 	NoIgnoreDotFiles bool
+	NoConcurrency    bool
 	Recursion        int
 }
 
@@ -87,6 +88,10 @@ func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, in
 
 		dirs := concurrentGenFileArray(fileArr, getDirs(path), recursion, config)
 
+		if config.NoConcurrency {
+			return countLinesRecursive(dirs)
+		}
+
 		return concurrentCountLinesRecursive(dirs)
 	}
 
@@ -138,6 +143,27 @@ func concurrentCountLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, 
 
 	languages := make(map[string]LanguageStats)
 	for r := range results {
+		lang := languages[r.Language]
+		lang.Files++
+		lang.CodeLines += r.CodeLines
+		lang.CommentLines += r.CommentLines
+		lang.BlankLines += r.BlankLines
+		languages[r.Language] = lang
+	}
+
+	return languages, totalFilesCounted, totalSkippedFiles
+}
+
+func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) {
+	var partialResults []fileStats
+	for _, v := range dirs {
+		if stats, ok := countLinesOfFile(v.fullpath()); ok {
+			partialResults = append(partialResults, stats)
+		}
+	}
+
+	languages := make(map[string]LanguageStats)
+	for _, r := range partialResults {
 		lang := languages[r.Language]
 		lang.Files++
 		lang.CodeLines += r.CodeLines
