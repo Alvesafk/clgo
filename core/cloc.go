@@ -85,9 +85,9 @@ func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, in
 
 		recursion := config.Recursion
 
-		dirs := genFileArray(fileArr, getDirs(path), recursion, config)
+		dirs := concurrentGenFileArray(fileArr, getDirs(path), recursion, config)
 
-		return countLinesRecursive(dirs)
+		return concurrentCountLinesRecursive(dirs)
 	}
 
 	languages := make(map[string]LanguageStats)
@@ -107,7 +107,7 @@ func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, in
 
 // countLinesRecursive function count the lines of a file slice, it uses concorrency, the
 // function create workers to count the lines of each directory file concorrently.
-func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) {
+func concurrentCountLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan fileStats, len(dirs))
 
@@ -262,7 +262,7 @@ func languageFromExt(filename string) (string, bool) {
 // genFileArray function get all the files of a dir and subdir using a slice of fileEntry
 // as base, it uses recursion and concorrency with workers to go aggroupate all files into
 // a file slice.
-func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fileEntry {
+func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fileEntry {
 	if len(dirArr) == 0 {
 		return fileArr
 	}
@@ -308,7 +308,7 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fi
 	}
 
 	if len(nextDirArr) > 0 && recLimit > 0 {
-		fileArr = genFileArray(fileArr, nextDirArr, recLimit-1, config)
+		fileArr = concurrentGenFileArray(fileArr, nextDirArr, recLimit-1, config)
 	}
 
 	return fileArr
