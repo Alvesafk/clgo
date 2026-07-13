@@ -86,11 +86,13 @@ func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, in
 
 		recursion := config.Recursion
 
-		dirs := concurrentGenFileArray(fileArr, getDirs(path), recursion, config)
-
 		if config.NoConcurrency {
+			dirs := genFileArray(fileArr, getDirs(path), recursion, config)
+
 			return countLinesRecursive(dirs)
 		}
+
+		dirs := concurrentGenFileArray(fileArr, getDirs(path), recursion, config)
 
 		return concurrentCountLinesRecursive(dirs)
 	}
@@ -335,6 +337,35 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 
 	if len(nextDirArr) > 0 && recLimit > 0 {
 		fileArr = concurrentGenFileArray(fileArr, nextDirArr, recLimit-1, config)
+	}
+
+	return fileArr
+}
+
+func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fileEntry {
+	if len(dirArr) == 0 {
+		return fileArr
+	}
+
+	var results dirResult
+	for _, v := range dirArr {
+		if isBin, _ := isBinary(v.fullpath()); strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles || isBin {
+			continue
+		}
+
+		if v.Entry.IsDir() {
+			results.dirs = append(results.dirs, getDirs(v.fullpath())...)
+		} else {
+			results.files = append(results.files, v)
+		}
+	}
+
+	var nextDirArr []fileEntry
+	fileArr = append(fileArr, results.files...)
+	nextDirArr = append(nextDirArr, results.dirs...)
+
+	if len(nextDirArr) > 0 && recLimit > 0 {
+		fileArr = genFileArray(fileArr, nextDirArr, recLimit-1, config)
 	}
 
 	return fileArr
