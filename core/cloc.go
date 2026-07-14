@@ -81,7 +81,7 @@ var (
 // two ints, the map is LanguageStats map with the stats of all parsed files, the two ints
 // are: total files counted and total skipped files.
 func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, int) {
-	if IsDir(path) {
+	if isDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
 
 		recursion := config.Recursion
@@ -179,7 +179,7 @@ func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) 
 
 // countLinesOfFile function parse a file couting it's code, blank and comment lines.
 func countLinesOfFile(filename string) (fileStats, bool) {
-	if IsDir(filename) {
+	if isDir(filename) {
 		return fileStats{}, false
 	}
 
@@ -386,7 +386,7 @@ func getDirs(dirPath string) []fileEntry {
 }
 
 // IsDir function returns true if path string is == the path of a directory.
-func IsDir(path string) bool {
+func isDir(path string) bool {
 	fi, err := os.Stat(path)
 	if err != nil {
 		fmt.Println(err)

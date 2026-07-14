@@ -66,16 +66,14 @@ func main() {
 		return
 	}
 
-	_, err := os.Stat(args[0])
+	path, err := os.Stat(args[0])
 	if err != nil {
 		ansi.Red.FgPrintf("Error: %s, aborting.\n", err)
 		return
 	}
 
-	isDir := core.IsDir(args[0])
-
 	start := time.Now()
-	if isDir {
+	if path.Mode().IsDir() {
 		stats, totalFilesCounted, totalIgnoredFiles := core.ProgramEntry(args[0], config)
 		totalTime := time.Since(start).Seconds()
 
