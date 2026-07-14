@@ -98,7 +98,9 @@ func printStatsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCount
 		t.AppendRow(table.Row{v.Key, v.Value.Files, v.Value.BlankLines, v.Value.CommentLines, v.Value.CodeLines})
 	}
 
-	t.AppendFooter(table.Row{"SUM", totalFilesCounted, getTotalBlankLines(m), getTotalCommentLines(m), getTotalCodeLines(m)})
+	if len(mSlice) > 1 {
+		t.AppendFooter(table.Row{"SUM", totalFilesCounted, getTotalBlankLines(m), getTotalCommentLines(m), getTotalCodeLines(m)})
+	}
 
 	t.Render()
 }
