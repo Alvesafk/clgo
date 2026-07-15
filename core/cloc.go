@@ -306,7 +306,7 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
-				if isBin, _ := isBinary(v.fullpath()); strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles || isBin {
+				if  skipFile(v, config) {
 					continue
 				}
 
@@ -342,6 +342,22 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 	return fileArr
 }
 
+func skipFile(v fileEntry, config Config) bool {
+	if slices.Contains(filenameToIgnore, v.Entry.Name()) {
+		return true
+	}
+
+	if strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles {
+		return true
+	}
+
+	if isBin, _ := isBinary(v.fullpath()); isBin {
+		return true
+	}
+
+	return false
+}
+
 func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fileEntry {
 	if len(dirArr) == 0 {
 		return fileArr
@@ -349,7 +365,7 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fi
 
 	var results dirResult
 	for _, v := range dirArr {
-		if isBin, _ := isBinary(v.fullpath()); strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles || isBin {
+		if skipFile(v, config) {
 			continue
 		}
 

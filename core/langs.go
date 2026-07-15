@@ -154,4 +154,5 @@ var filenameException = map[string]string{
 
 var filenameToIgnore = []string{
 	"LICENSE",
+	"node_modules",
 }
