@@ -20,21 +20,38 @@ import (
 
 // Config struct for optional flags defined in main.go.
 type Config struct {
-	NoStats          bool
-	NoIgnoreDotFiles bool
-	NoConcurrency    bool
-	Recursion        int
+	NoStats           bool
+	NoIgnoreDotFiles  bool
+	NoConcurrency     bool
+	Recursion         int
+	StringExtToIgnore string
+	sliceExtToIgnore  []string
+}
+
+func (c *Config) SetExtToIgnoreSlice() {
+	if c.StringExtToIgnore != "" {
+		if strings.Contains(c.StringExtToIgnore, ",") {
+			c.sliceExtToIgnore = strings.Split(c.StringExtToIgnore, ",")
+		} else {
+			c.sliceExtToIgnore = append(c.sliceExtToIgnore, c.StringExtToIgnore)
+		}
+	}
 }
 
 // fileEntry struct has the actual os.DirEntry and the path of the file.
 type fileEntry struct {
 	Entry os.DirEntry
 	Path  string
+	Ext   string
 }
 
 // fullpath method retuns a string with the full path of f file.
 func (f fileEntry) fullpath() string {
 	return filepath.Join(f.Path, f.Entry.Name())
+}
+
+func (f fileEntry) ext() string {
+	return filepath.Ext(f.fullpath())
 }
 
 // dirResult is used when getting the dirs / files when recrusing in a directory.
@@ -306,13 +323,13 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 		go func() {
 			defer wg.Done()
 			for v := range jobs {
-				if  skipFile(v, config) {
+				if skipFile(v, config) {
 					continue
 				}
 
 				if v.Entry.IsDir() {
 					results <- dirResult{dirs: getDirs(v.fullpath())}
-				} else {
+				} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
 					results <- dirResult{files: []fileEntry{v}}
 				}
 			}

@@ -44,6 +44,12 @@ func init() {
 	flag.IntVar(&config.Recursion, "recursion", core.RECURSION_LIMIT, "Define recursion limit.")
 	flag.IntVar(&config.Recursion, "r", core.RECURSION_LIMIT, "Define recursion limit.")
 
+	// IgnoreExt flag lets the user define extensions to ignore by writing a string like
+	// this: ".go,.c,.cpp", the exts separated by a comma, this will make so clgo ignores
+	// any file that has an go, c or cpp extension.
+	flag.StringVar(&config.StringExtToIgnore, "ignoreExt", "", "Ignore files with extensions defined by a string like: '.go,.c,.cpp'.")
+	flag.StringVar(&config.StringExtToIgnore, "ie", "", "Ignore files with extensions defined by a string like: '.go,.c,.cpp'.")
+
 }
 
 func main() {
@@ -53,6 +59,8 @@ func main() {
 		usage()
 		os.Exit(0)
 	}
+
+	config.SetExtToIgnoreSlice()
 
 	args := flag.Args()
 
