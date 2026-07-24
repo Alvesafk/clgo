@@ -417,7 +417,7 @@ func isDir(path string) bool {
 }
 
 // isBinary function returns true if path string is the path of a binary file,
-// the function checks for a "0x00" byte insede the first 8000 bytes, it's how
+// the function checks for a "0x00" byte inside the first 8000 bytes, it's how
 // git does this.
 func isBinary(path string) (bool, error) {
 	f, err := os.Open(path)

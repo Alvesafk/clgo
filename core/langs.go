@@ -83,6 +83,7 @@ var extToLanguage = map[string]string{
 	".erl":        "Erlang",
 	".hrl":        "Erlang",
 	".dockerfile": "Dockerfile",
+	".bat":        "Bat",
 }
 
 // Defining the comment semantics of the languages.
