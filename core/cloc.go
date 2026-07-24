@@ -388,7 +388,7 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fi
 
 		if v.Entry.IsDir() {
 			results.dirs = append(results.dirs, getDirs(v.fullpath())...)
-		} else {
+		} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
 			results.files = append(results.files, v)
 		}
 	}
