@@ -91,42 +91,26 @@ const (
 )
 
 var (
-	totalFilesFound   int64
-	totalFilesCounted int64
-	totalSkippedFiles int64
-	totalLinesCounted int64
+	totalFilesFound   atomic.Int64
+	totalFilesCounted atomic.Int64
+	totalSkippedFiles atomic.Int64
+	totalLinesCounted atomic.Int64
 )
 
-func IncrementTotalFilesFound() int64 {
-	return atomic.AddInt64(&totalFilesFound, 1)
-}
-
 func GetTotalFilesFound() int64 {
-	return atomic.LoadInt64(&totalFilesFound)
-}
-
-func IncrementTotalFilesCounted() int64 {
-	return atomic.AddInt64(&totalFilesCounted, 1)
+	return totalFilesFound.Load()
 }
 
 func GetTotalFilesCounted() int64 {
-	return atomic.LoadInt64(&totalFilesCounted)
-}
-
-func IncrementTotalSkippedFiles() int64 {
-	return atomic.AddInt64(&totalSkippedFiles, 1)
+	return totalFilesCounted.Load()
 }
 
 func GetTotalSkippedFiles() int64 {
-	return atomic.LoadInt64(&totalSkippedFiles)
-}
-
-func IncrementTotalLinesCounted(i int64) int64 {
-	return atomic.AddInt64(&totalLinesCounted, i)
+	return totalSkippedFiles.Load()
 }
 
 func GetTotalLinesCounted() int64 {
-	return atomic.LoadInt64(&totalLinesCounted)
+	return totalLinesCounted.Load()
 }
 
 // ProgramEntry function receives a path string and a config struct, it returns a map and
@@ -241,7 +225,7 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		IncrementTotalSkippedFiles()
+		totalSkippedFiles.Add(1)
 		return fileStats{}, false
 	}
 	defer file.Close()
@@ -259,7 +243,7 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
-		IncrementTotalSkippedFiles()
+		totalSkippedFiles.Add(1)
 		return fileStats{}, false
 	}
 
@@ -305,12 +289,12 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		totalSkippedFiles++
+		totalSkippedFiles.Add(1)
 		return fileStats{}, false
 	}
 
-	IncrementTotalFilesCounted()
-	IncrementTotalLinesCounted(int64(stats.CodeLines))
+	totalSkippedFiles.Add(1)
+	totalLinesCounted.Add(int64(stats.CodeLines) + int64(stats.CommentLines) + int64(stats.BlankLines))
 
 	return stats, true
 }
@@ -366,7 +350,7 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 				if v.Entry.IsDir() {
 					results <- dirResult{dirs: getDirs(v.fullpath())}
 				} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
-					IncrementTotalFilesFound()
+					totalFilesFound.Add(1)
 					results <- dirResult{files: []fileEntry{v}}
 				}
 			}
@@ -396,22 +380,6 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 	return fileArr
 }
 
-func skipFile(v fileEntry, config Config) bool {
-	if slices.Contains(filenameToIgnore, v.Entry.Name()) {
-		return true
-	}
-
-	if strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles {
-		return true
-	}
-
-	if isBin, _ := isBinary(v.fullpath()); isBin {
-		return true
-	}
-
-	return false
-}
-
 func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fileEntry {
 	if len(dirArr) == 0 {
 		return fileArr
@@ -426,7 +394,7 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fi
 		if v.Entry.IsDir() {
 			results.dirs = append(results.dirs, getDirs(v.fullpath())...)
 		} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
-			IncrementTotalFilesFound()
+			totalFilesFound.Add(1)
 			results.files = append(results.files, v)
 		}
 	}
@@ -488,6 +456,22 @@ func isBinary(path string) (bool, error) {
 	}
 
 	return bytes.IndexByte(buf[:n], 0) != -1, nil
+}
+
+func skipFile(v fileEntry, config Config) bool {
+	if slices.Contains(filenameToIgnore, v.Entry.Name()) {
+		return true
+	}
+
+	if strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles {
+		return true
+	}
+
+	if isBin, _ := isBinary(v.fullpath()); isBin {
+		return true
+	}
+
+	return false
 }
 
 func checkCommentPrefix(trimmed string, markers commentMarkers) bool {
