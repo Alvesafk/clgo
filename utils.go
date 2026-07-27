@@ -70,6 +70,8 @@ func (p *Progress) Clear() {
 	} else {
 		fmt.Print("\r")
 	}
+
+	fmt.Print("\033[?25h")
 }
 
 type kv struct {

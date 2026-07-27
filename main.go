@@ -9,7 +9,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"sync/atomic"
+	"syscall"
 	"time"
 
 	"github.com/Alvesafk/clgo/core"
@@ -87,6 +89,15 @@ func main() {
 		return
 	}
 
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-sigChan
+		fmt.Print("\033[?25h")
+		fmt.Printf("\nAborting the program.\n")
+		os.Exit(1)
+	}()
+
 	start := time.Now()
 	if path.Mode().IsDir() {
 		resultChan := make(chan result)
@@ -151,6 +162,8 @@ func main() {
 
 		progress := NewProgress()
 		linesCounted := progress.Register("Lines counted")
+
+		fmt.Print("\033[?25l")
 
 		go func() {
 			firstPrint := true
