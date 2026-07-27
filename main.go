@@ -9,12 +9,19 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sync/atomic"
 	"time"
 
 	"github.com/Alvesafk/clgo/core"
 
 	"github.com/Alvesafk/scolor/ansi"
 )
+
+type result struct {
+	stats             map[string]core.LanguageStats
+	totalFilesCounted int64
+	totalIgnoredFiles int64
+}
 
 var (
 	config core.Config // Config struct for flags.
@@ -82,31 +89,97 @@ func main() {
 
 	start := time.Now()
 	if path.Mode().IsDir() {
-		stats, totalFilesCounted, totalIgnoredFiles := core.ProgramEntry(args[0], config)
+		resultChan := make(chan result)
+		var done atomic.Int32
+
+		go func() {
+			stats, totalFilesCounted, totalIgnoredFiles := core.ProgramEntry(args[0], config)
+			resultChan <- result{stats, totalFilesCounted, totalIgnoredFiles}
+		}()
+
+		progress := NewProgress()
+		filesFound := progress.Register("Files found  ")
+		filesCounted := progress.Register("Files counted")
+		linesCounted := progress.Register("Lines counted")
+
+		go func() {
+			firstPrint := true
+			for done.Load() == 0 {
+				atomic.StoreInt64(filesFound, core.GetTotalFilesFound())
+				atomic.StoreInt64(filesCounted, core.GetTotalFilesCounted())
+				atomic.StoreInt64(linesCounted, core.GetTotalLinesCounted())
+
+				if !firstPrint {
+					fmt.Printf("\033[%dA", len(progress.order))
+				}
+				firstPrint = false
+
+				progress.Print()
+
+				time.Sleep(100 * time.Millisecond)
+			}
+		}()
+
+		res := <-resultChan
+		done.Store(1)
+
+		progress.Clear()
+
 		totalTime := time.Since(start).Seconds()
 
-		sortedStats := sortStats(stats)
+		sortedStats := sortStats(res.stats)
 
-		printStatsDir(stats, sortedStats, totalFilesCounted)
+		printMetricsDir(res.stats, sortedStats, res.totalFilesCounted)
 		if !config.NoStats {
 			fmt.Println(" Stats:")
 			fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
 			fmt.Printf(" Rate of Files :: %.2f/s\n Rate of Lines :: %.2f/s\n",
-				float64(totalFilesCounted)/totalTime, float64(getTotalLines(stats))/totalTime)
+				float64(res.totalFilesCounted)/totalTime, float64(getTotalLines(res.stats))/totalTime)
 
 			fmt.Printf(" Skipped Files :: %v\n Precision     :: %.2f%%\n",
-				totalIgnoredFiles, float64(totalFilesCounted*100)/float64(totalFilesCounted+totalIgnoredFiles))
+				res.totalIgnoredFiles, float64(res.totalFilesCounted*100)/float64(res.totalFilesCounted+res.totalIgnoredFiles))
 		}
 
 	} else {
-		stats, _, _ := core.ProgramEntry(args[0], config)
+		resultChan := make(chan result)
+		var done atomic.Int32
+
+		go func() {
+			stats, _, _ := core.ProgramEntry(args[0], config)
+			resultChan <- result{stats, 1, 0}
+		}()
+
+		progress := NewProgress()
+		linesCounted := progress.Register("Lines counted")
+
+		go func() {
+			firstPrint := true
+			for done.Load() == 0 {
+				atomic.StoreInt64(linesCounted, core.GetTotalLinesCounted())
+
+				if !firstPrint {
+					fmt.Printf("\033[%dA", len(progress.order))
+				}
+				firstPrint = false
+
+				progress.Print()
+
+				time.Sleep(100 * time.Millisecond)
+			}
+		}()
+
+		res := <-resultChan
+		done.Store(1)
+
 		totalTime := time.Since(start).Seconds()
 
-		printStatsFile(stats)
+		progress.Clear()
+
+		printMetricsFile(res.stats)
 		if !config.NoStats {
 			fmt.Println(" Stats:")
 			fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
-			fmt.Printf(" Rate of Lines :: %.2f/s\n", float64(getTotalLines(stats))/totalTime)
+			fmt.Printf(" Rate of Lines :: %.2f/s\n", float64(getTotalLines(res.stats))/totalTime)
 
 		}
 	}

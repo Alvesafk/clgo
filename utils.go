@@ -9,11 +9,68 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"sync"
+	"sync/atomic"
 
 	"github.com/Alvesafk/clgo/core"
 	"github.com/Alvesafk/scolor/ansi"
 	"github.com/jedib0t/go-pretty/v6/table"
 )
+
+type Progress struct {
+	mu      sync.Mutex
+	order   []string
+	metrics map[string]*int64
+}
+
+func NewProgress() *Progress {
+	return &Progress{
+		metrics: make(map[string]*int64),
+	}
+}
+
+func (p *Progress) Register(name string) *int64 {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	v := new(int64)
+	p.metrics[name] = v
+	p.order = append(p.order, name)
+	return v
+}
+
+func (p *Progress) Print() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	for _, name := range p.order {
+		fmt.Printf("\033[2K\r%s :: %d\n", name, atomic.LoadInt64(p.metrics[name]))
+	}
+}
+
+func (p *Progress) Clear() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	n := len(p.order)
+	if n == 0 {
+		return
+	}
+
+	fmt.Printf("\033[%dA", n)
+
+	for i := range n {
+		fmt.Print("\033[2K")
+		if i < n-1 {
+			fmt.Print("\033[1B")
+		}
+	}
+
+	if n > 1 {
+		fmt.Printf("\033[%dA\r", n-1)
+	} else {
+		fmt.Print("\r")
+	}
+}
 
 type kv struct {
 	Key   string
@@ -86,7 +143,7 @@ func sortStats(m map[string]core.LanguageStats) (sortedSlice []kv) {
 
 // Print the final table with the amount of lines, this one is used when the entry file
 // was a directory.
-func printStatsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCounted int) {
+func printMetricsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCounted int64) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 
@@ -107,7 +164,7 @@ func printStatsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCount
 
 // Print the final table with the amount of lines, this one is used when the entry file
 // was a file.
-func printStatsFile(m map[string]core.LanguageStats) {
+func printMetricsFile(m map[string]core.LanguageStats) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 

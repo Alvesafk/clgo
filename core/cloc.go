@@ -16,6 +16,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 // Config struct for optional flags defined in main.go.
@@ -90,14 +91,48 @@ const (
 )
 
 var (
-	totalFilesCounted int
-	totalSkippedFiles int
+	totalFilesFound   int64
+	totalFilesCounted int64
+	totalSkippedFiles int64
+	totalLinesCounted int64
 )
+
+func IncrementTotalFilesFound() int64 {
+	return atomic.AddInt64(&totalFilesFound, 1)
+}
+
+func GetTotalFilesFound() int64 {
+	return atomic.LoadInt64(&totalFilesFound)
+}
+
+func IncrementTotalFilesCounted() int64 {
+	return atomic.AddInt64(&totalFilesCounted, 1)
+}
+
+func GetTotalFilesCounted() int64 {
+	return atomic.LoadInt64(&totalFilesCounted)
+}
+
+func IncrementTotalSkippedFiles() int64 {
+	return atomic.AddInt64(&totalSkippedFiles, 1)
+}
+
+func GetTotalSkippedFiles() int64 {
+	return atomic.LoadInt64(&totalSkippedFiles)
+}
+
+func IncrementTotalLinesCounted(i int64) int64 {
+	return atomic.AddInt64(&totalLinesCounted, i)
+}
+
+func GetTotalLinesCounted() int64 {
+	return atomic.LoadInt64(&totalLinesCounted)
+}
 
 // ProgramEntry function receives a path string and a config struct, it returns a map and
 // two ints, the map is LanguageStats map with the stats of all parsed files, the two ints
 // are: total files counted and total skipped files.
-func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, int) {
+func ProgramEntry(path string, config Config) (map[string]LanguageStats, int64, int64) {
 	if isDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
 
@@ -126,12 +161,12 @@ func ProgramEntry(path string, config Config) (map[string]LanguageStats, int, in
 		}
 	}
 
-	return languages, totalFilesCounted, totalSkippedFiles
+	return languages, GetTotalFilesCounted(), GetTotalSkippedFiles()
 }
 
 // countLinesRecursive function count the lines of a file slice, it uses concorrency, the
 // function create workers to count the lines of each directory file concorrently.
-func concurrentCountLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) {
+func concurrentCountLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int64, int64) {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan fileStats, len(dirs))
 
@@ -170,10 +205,10 @@ func concurrentCountLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, 
 		languages[r.Language] = lang
 	}
 
-	return languages, totalFilesCounted, totalSkippedFiles
+	return languages, GetTotalFilesCounted(), GetTotalSkippedFiles()
 }
 
-func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) {
+func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int64, int64) {
 	var partialResults []fileStats
 	for _, v := range dirs {
 		if stats, ok := countLinesOfFile(v.fullpath()); ok {
@@ -191,7 +226,7 @@ func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int, int) 
 		languages[r.Language] = lang
 	}
 
-	return languages, totalFilesCounted, totalSkippedFiles
+	return languages, GetTotalFilesCounted(), GetTotalSkippedFiles()
 }
 
 // countLinesOfFile function parse a file couting it's code, blank and comment lines.
@@ -206,7 +241,7 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 
 	file, err := os.Open(filename)
 	if err != nil {
-		totalSkippedFiles++
+		IncrementTotalSkippedFiles()
 		return fileStats{}, false
 	}
 	defer file.Close()
@@ -224,7 +259,7 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 
 	_, err = file.Seek(0, io.SeekStart)
 	if err != nil {
-		totalSkippedFiles++
+		IncrementTotalSkippedFiles()
 		return fileStats{}, false
 	}
 
@@ -274,7 +309,8 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 		return fileStats{}, false
 	}
 
-	totalFilesCounted++
+	IncrementTotalFilesCounted()
+	IncrementTotalLinesCounted(int64(stats.CodeLines))
 
 	return stats, true
 }
@@ -330,6 +366,7 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 				if v.Entry.IsDir() {
 					results <- dirResult{dirs: getDirs(v.fullpath())}
 				} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
+					IncrementTotalFilesFound()
 					results <- dirResult{files: []fileEntry{v}}
 				}
 			}
@@ -389,6 +426,7 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config) []fi
 		if v.Entry.IsDir() {
 			results.dirs = append(results.dirs, getDirs(v.fullpath())...)
 		} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
+			IncrementTotalFilesFound()
 			results.files = append(results.files, v)
 		}
 	}
