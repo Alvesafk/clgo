@@ -142,13 +142,7 @@ func main() {
 
 		printMetricsDir(res.stats, sortedStats, res.totalFilesCounted)
 		if !config.NoStats {
-			fmt.Println(" Stats:")
-			fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
-			fmt.Printf(" Rate of Files :: %.2f/s\n Rate of Lines :: %.2f/s\n",
-				float64(res.totalFilesCounted)/totalTime, float64(getTotalLines(res.stats))/totalTime)
-
-			fmt.Printf(" Skipped Files :: %v\n Precision     :: %.2f%%\n",
-				res.totalIgnoredFiles, float64(res.totalFilesCounted*100)/float64(res.totalFilesCounted+res.totalIgnoredFiles))
+			printStatsDir(res, totalTime)
 		}
 
 	} else {
@@ -190,10 +184,7 @@ func main() {
 
 		printMetricsFile(res.stats)
 		if !config.NoStats {
-			fmt.Println(" Stats:")
-			fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
-			fmt.Printf(" Rate of Lines :: %.2f/s\n", float64(getTotalLines(res.stats))/totalTime)
-
+			printStatsFile(res, totalTime)
 		}
 	}
 }

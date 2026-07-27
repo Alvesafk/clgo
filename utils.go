@@ -164,6 +164,17 @@ func printMetricsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCou
 	t.Render()
 }
 
+func printStatsDir(res result, totalTime float64) {
+	fmt.Println(" Stats:")
+	fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
+	fmt.Printf(" Rate of Files :: %.2f/s\n Rate of Lines :: %.2f/s\n",
+		float64(res.totalFilesCounted)/totalTime, float64(getTotalLines(res.stats))/totalTime)
+
+	fmt.Printf(" Skipped Files :: %v\n Precision     :: %.2f%%\n",
+		res.totalIgnoredFiles, float64(res.totalFilesCounted*100)/float64(res.totalFilesCounted+res.totalIgnoredFiles))
+
+}
+
 // Print the final table with the amount of lines, this one is used when the entry file
 // was a file.
 func printMetricsFile(m map[string]core.LanguageStats) {
@@ -179,4 +190,10 @@ func printMetricsFile(m map[string]core.LanguageStats) {
 	}
 
 	t.Render()
+}
+
+func printStatsFile(res result, totalTime float64) {
+	fmt.Println(" Stats:")
+	fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
+	fmt.Printf(" Rate of Lines :: %.2f/s\n", float64(getTotalLines(res.stats))/totalTime)
 }
