@@ -83,12 +83,13 @@ type kv struct {
 func usage() {
 	usageMsg := `
 Usage instructions:
-clgo [options] <files>
+clgo [flags] <file/dir>
 
 Flags:\n
---recursion       / -r  :: Define recursion limit.
---noStats         / -ns :: Disables stats after execution, only total lines will be showed.
---noConcurrency   / -nc :: Use non-concurrent functions`
+--recursion     / -r  :: Define recursion limit.
+--noStats       / -ns :: Disables stats after execution, only total lines will be showed.
+--noConcurrency / -nc :: Use non-concurrent functions
+--ignoreExt     / -ie :: Ignore files with extensions defined by a string like: '.go,.c,.cpp'.`
 
 	ansi.Green.FgPrintf("------------Clgo------------")
 	fmt.Println(usageMsg)
