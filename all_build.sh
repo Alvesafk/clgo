@@ -24,11 +24,15 @@ else
 	echo "Removed content."
 fi 
 
+go mod verify
+
+go mod tidy
+
 echo "Compiling for Windows / .exe"
-GOOS=windows GOARCH=amd64 go build -o bin/clgo.exe .
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags="-s -w" -a -o bin/clgo.exe .
 echo "Finished"
 
 echo "Compiling for Linux / elf"
-GOOS=linux GOARCH=amd64 go build -o bin/clgo .
+CGO_ENBLAED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -a -o bin/clgo .
 
 echo "All done."
