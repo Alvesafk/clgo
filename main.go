@@ -19,12 +19,6 @@ import (
 	"github.com/Alvesafk/scolor/ansi"
 )
 
-type result struct {
-	stats             map[string]core.LanguageStats
-	totalFilesCounted int64
-	totalIgnoredFiles int64
-}
-
 var (
 	config core.Config // Config struct for flags.
 
@@ -100,12 +94,12 @@ func main() {
 
 	start := time.Now()
 	if path.Mode().IsDir() {
-		resultChan := make(chan result)
+		resultChan := make(chan core.Result)
 		var done atomic.Int32
 
 		go func() {
-			stats, totalFilesCounted, totalIgnoredFiles := core.ProgramEntry(args[0], config)
-			resultChan <- result{stats, totalFilesCounted, totalIgnoredFiles}
+			metrics := core.ProgramEntry(args[0], config)
+			resultChan <- metrics
 		}()
 
 		progress := NewProgress()
@@ -138,20 +132,20 @@ func main() {
 
 		totalTime := time.Since(start).Seconds()
 
-		sortedStats := sortStats(res.stats)
+		sortedStats := sortStats(res.Languages)
 
-		printMetricsDir(res.stats, sortedStats, res.totalFilesCounted)
+		printMetricsDir(res.Languages, sortedStats)
 		if !config.NoStats {
-			printStatsDir(res, totalTime)
+			printStatsDir(res.Languages, totalTime)
 		}
 
 	} else {
-		resultChan := make(chan result)
+		resultChan := make(chan core.Result)
 		var done atomic.Int32
 
 		go func() {
-			stats, _, _ := core.ProgramEntry(args[0], config)
-			resultChan <- result{stats, 1, 0}
+			metrics := core.ProgramEntry(args[0], config)
+			resultChan <- metrics
 		}()
 
 		progress := NewProgress()
@@ -182,9 +176,9 @@ func main() {
 
 		progress.Clear()
 
-		printMetricsFile(res.stats)
+		printMetricsFile(res.Languages)
 		if !config.NoStats {
-			printStatsFile(res, totalTime)
+			printStatsFile(res.Languages, totalTime)
 		}
 	}
 }

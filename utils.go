@@ -130,6 +130,14 @@ func getTotalCodeLines(m map[string]core.LanguageStats) (result int) {
 	return
 }
 
+func getTotalFiles(m map[string]core.LanguageStats) (result int) {
+	for _, v := range m {
+		result += v.Files
+	}
+
+	return
+}
+
 // Sorts a map into ordered slice based on the total of 'CodeLines'.
 func sortStats(m map[string]core.LanguageStats) (sortedSlice []kv) {
 	for k, v := range m {
@@ -145,7 +153,7 @@ func sortStats(m map[string]core.LanguageStats) (sortedSlice []kv) {
 
 // Print the final table with the amount of lines, this one is used when the entry file
 // was a directory.
-func printMetricsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCounted int64) {
+func printMetricsDir(m map[string]core.LanguageStats, mSlice []kv) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 
@@ -158,20 +166,23 @@ func printMetricsDir(m map[string]core.LanguageStats, mSlice []kv, totalFilesCou
 	}
 
 	if len(mSlice) > 1 {
-		t.AppendFooter(table.Row{"SUM", totalFilesCounted, getTotalBlankLines(m), getTotalCommentLines(m), getTotalCodeLines(m)})
+		t.AppendFooter(table.Row{"SUM", getTotalFiles(m), getTotalBlankLines(m), getTotalCommentLines(m), getTotalCodeLines(m)})
 	}
 
 	t.Render()
 }
 
-func printStatsDir(res result, totalTime float64) {
+func printStatsDir(res map[string]core.LanguageStats, totalTime float64) {
+	totalFilesCounted := getTotalFiles(res)
+	totalIgnoredFiles := core.GetTotalSkippedFiles()
+
 	fmt.Println(" Stats:")
 	fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
 	fmt.Printf(" Rate of Files :: %.2f/s\n Rate of Lines :: %.2f/s\n",
-		float64(res.totalFilesCounted)/totalTime, float64(getTotalLines(res.stats))/totalTime)
+		float64(totalFilesCounted)/totalTime, float64(getTotalLines(res))/totalTime)
 
 	fmt.Printf(" Skipped Files :: %v\n Precision     :: %.2f%%\n",
-		res.totalIgnoredFiles, float64(res.totalFilesCounted*100)/float64(res.totalFilesCounted+res.totalIgnoredFiles))
+		totalIgnoredFiles, float64(totalFilesCounted*100)/float64(int64(totalFilesCounted)+totalIgnoredFiles))
 
 }
 
@@ -192,8 +203,8 @@ func printMetricsFile(m map[string]core.LanguageStats) {
 	t.Render()
 }
 
-func printStatsFile(res result, totalTime float64) {
+func printStatsFile(res map[string]core.LanguageStats, totalTime float64) {
 	fmt.Println(" Stats:")
 	fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
-	fmt.Printf(" Rate of Lines :: %.2f/s\n", float64(getTotalLines(res.stats))/totalTime)
+	fmt.Printf(" Rate of Lines :: %.2f/s\n", float64(getTotalLines(res))/totalTime)
 }

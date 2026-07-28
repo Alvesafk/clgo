@@ -86,6 +86,10 @@ type commentMarkers struct {
 	Close string
 }
 
+type Result struct {
+	Languages map[string]LanguageStats
+}
+
 const (
 	RECURSION_LIMIT = 20 // Limit for recursion.
 )
@@ -116,7 +120,7 @@ func GetTotalLinesCounted() int64 {
 // ProgramEntry function receives a path string and a config struct, it returns a map and
 // two ints, the map is LanguageStats map with the stats of all parsed files, the two ints
 // are: total files counted and total skipped files.
-func ProgramEntry(path string, config Config) (map[string]LanguageStats, int64, int64) {
+func ProgramEntry(path string, config Config) Result {
 	if isDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
 
@@ -145,12 +149,14 @@ func ProgramEntry(path string, config Config) (map[string]LanguageStats, int64, 
 		}
 	}
 
-	return languages, GetTotalFilesCounted(), GetTotalSkippedFiles()
+	return Result{
+		Languages: languages,
+	}
 }
 
 // countLinesRecursive function count the lines of a file slice, it uses concorrency, the
 // function create workers to count the lines of each directory file concorrently.
-func concurrentCountLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int64, int64) {
+func concurrentCountLinesRecursive(dirs []fileEntry) Result {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan fileStats, len(dirs))
 
@@ -189,10 +195,12 @@ func concurrentCountLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, 
 		languages[r.Language] = lang
 	}
 
-	return languages, GetTotalFilesCounted(), GetTotalSkippedFiles()
+	return Result{
+		Languages: languages,
+	}
 }
 
-func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int64, int64) {
+func countLinesRecursive(dirs []fileEntry) Result {
 	var partialResults []fileStats
 	for _, v := range dirs {
 		if stats, ok := countLinesOfFile(v.fullpath()); ok {
@@ -210,7 +218,9 @@ func countLinesRecursive(dirs []fileEntry) (map[string]LanguageStats, int64, int
 		languages[r.Language] = lang
 	}
 
-	return languages, GetTotalFilesCounted(), GetTotalSkippedFiles()
+	return Result{
+		Languages: languages,
+	}
 }
 
 // countLinesOfFile function parse a file couting it's code, blank and comment lines.
@@ -293,7 +303,6 @@ func countLinesOfFile(filename string) (fileStats, bool) {
 		return fileStats{}, false
 	}
 
-	totalSkippedFiles.Add(1)
 	totalLinesCounted.Add(int64(stats.CodeLines) + int64(stats.CommentLines) + int64(stats.BlankLines))
 
 	return stats, true
