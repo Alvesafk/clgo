@@ -454,10 +454,10 @@ func isDir(path string) bool {
 	return false
 }
 
-// isBinary function returns true if path string is the path of a binary file,
+// IsBinary function returns true if path string is the path of a binary file,
 // the function checks for a "0x00" byte inside the first 8000 bytes, it's how
 // git does this.
-func isBinary(path string) (bool, error) {
+func IsBinary(path string) (bool, error) {
 	file, err := os.Stat(path)
 	if err != nil {
 		return false, err
@@ -491,7 +491,7 @@ func skipFile(v fileEntry, config Config) bool {
 		return true
 	}
 
-	if isBin, _ := isBinary(v.fullpath()); isBin {
+	if isBin, _ := IsBinary(v.fullpath()); isBin {
 		return true
 	}
 

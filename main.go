@@ -83,6 +83,15 @@ func main() {
 		return
 	}
 
+	if ok, err := core.IsBinary(args[0]); err == nil && ok {
+		fmt.Println("File is a binary, aborting.")
+		os.Exit(1)
+
+	} else if err != nil {
+		fmt.Println("Error when checkin if file is a binary:", err)
+		os.Exit(1)
+	}
+
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
