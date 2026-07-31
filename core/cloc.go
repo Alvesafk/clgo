@@ -256,6 +256,7 @@ func countLinesOfFile(filename string, metrics *Metrics) (fileStats, bool) {
 	var insideBlock bool
 
 	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, 64*1024), 16*1014*1024)
 	for scanner.Scan() {
 		line := scanner.Text()
 		trimmed := strings.TrimSpace(line)
