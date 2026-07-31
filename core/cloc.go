@@ -52,7 +52,7 @@ func (f fileEntry) fullpath() string {
 }
 
 func (f fileEntry) ext() string {
-	return filepath.Ext(f.fullpath())
+	return filepath.Ext(strings.ToLower(f.fullpath()))
 }
 
 // dirResult is used when getting the dirs / files when recrusing in a directory.
@@ -307,7 +307,7 @@ func countLinesOfFile(filename string, metrics *Metrics) (fileStats, bool) {
 func languageFromExt(filename string) (string, bool) {
 	baseName := filepath.Base(filename)
 
-	ext := filepath.Ext(filename)
+	ext := filepath.Ext(strings.ToLower(filename))
 	if !strings.Contains(ext, ".") {
 		if file, ok := filenameException[baseName]; ok {
 			return file, false
