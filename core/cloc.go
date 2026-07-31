@@ -160,7 +160,7 @@ func concurrentCountLinesRecursive(dirs []fileEntry) Result {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan fileStats, len(dirs))
 
-	numWorkers := runtime.NumCPU() / 2
+	numWorkers := max(1, runtime.NumCPU() / 2)
 	var wg sync.WaitGroup
 
 	for range numWorkers {
