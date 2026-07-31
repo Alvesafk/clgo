@@ -97,9 +97,11 @@ func main() {
 		resultChan := make(chan core.Result)
 		var done atomic.Int32
 
+		var metrics core.Metrics
+
 		go func() {
-			metrics := core.ProgramEntry(args[0], config)
-			resultChan <- metrics
+			result := core.ProgramEntry(args[0], config, &metrics)
+			resultChan <- result
 		}()
 
 		progress := NewProgress()
@@ -110,9 +112,9 @@ func main() {
 		go func() {
 			firstPrint := true
 			for done.Load() == 0 {
-				atomic.StoreInt64(filesFound, core.GetTotalFilesFound())
-				atomic.StoreInt64(filesCounted, core.GetTotalFilesCounted())
-				atomic.StoreInt64(linesCounted, core.GetTotalLinesCounted())
+				atomic.StoreInt64(filesFound, metrics.FilesFound.Load())
+				atomic.StoreInt64(filesCounted, metrics.FilesCounted.Load())
+				atomic.StoreInt64(linesCounted, metrics.LinesCounted.Load())
 
 				if !firstPrint {
 					fmt.Printf("\033[%dA", len(progress.order))
@@ -125,27 +127,29 @@ func main() {
 			}
 		}()
 
-		res := <-resultChan
+		r := <-resultChan
 		done.Store(1)
 
 		progress.Clear()
 
 		totalTime := time.Since(start).Seconds()
 
-		sortedStats := sortStats(res.Languages)
+		sortedStats := sortStats(r.Languages)
 
-		printMetricsDir(res.Languages, sortedStats)
+		printResultDir(r.Languages, sortedStats)
 		if !config.NoStats {
-			printStatsDir(res.Languages, totalTime)
+			printStatsDir(r.Languages, totalTime, &metrics)
 		}
 
 	} else {
 		resultChan := make(chan core.Result)
 		var done atomic.Int32
 
+		var metrics core.Metrics
+
 		go func() {
-			metrics := core.ProgramEntry(args[0], config)
-			resultChan <- metrics
+			result := core.ProgramEntry(args[0], config, &metrics)
+			resultChan <- result
 		}()
 
 		progress := NewProgress()
@@ -156,7 +160,7 @@ func main() {
 		go func() {
 			firstPrint := true
 			for done.Load() == 0 {
-				atomic.StoreInt64(linesCounted, core.GetTotalLinesCounted())
+				atomic.StoreInt64(linesCounted, metrics.LinesCounted.Load())
 
 				if !firstPrint {
 					fmt.Printf("\033[%dA", len(progress.order))
@@ -176,7 +180,7 @@ func main() {
 
 		progress.Clear()
 
-		printMetricsFile(res.Languages)
+		printResultFile(res.Languages)
 		if !config.NoStats {
 			printStatsFile(res.Languages, totalTime)
 		}

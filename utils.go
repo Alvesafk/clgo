@@ -154,7 +154,7 @@ func sortStats(m map[string]core.LanguageStats) (sortedSlice []kv) {
 
 // Print the final table with the amount of lines, this one is used when the entry file
 // was a directory.
-func printMetricsDir(m map[string]core.LanguageStats, mSlice []kv) {
+func printResultDir(m map[string]core.LanguageStats, mSlice []kv) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 
@@ -173,9 +173,9 @@ func printMetricsDir(m map[string]core.LanguageStats, mSlice []kv) {
 	t.Render()
 }
 
-func printStatsDir(res map[string]core.LanguageStats, totalTime float64) {
+func printStatsDir(res map[string]core.LanguageStats, totalTime float64, metrics *core.Metrics) {
 	totalFilesCounted := getTotalFiles(res)
-	totalIgnoredFiles := core.GetTotalSkippedFiles()
+	totalIgnoredFiles := metrics.SkippedFiles.Load()
 
 	fmt.Println(" Stats:")
 	fmt.Printf(" Time elapsed  :: %.6f seconds.\n", totalTime)
@@ -189,7 +189,7 @@ func printStatsDir(res map[string]core.LanguageStats, totalTime float64) {
 
 // Print the final table with the amount of lines, this one is used when the entry file
 // was a file.
-func printMetricsFile(m map[string]core.LanguageStats) {
+func printResultFile(m map[string]core.LanguageStats) {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 
