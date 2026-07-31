@@ -121,6 +121,11 @@ func GetTotalLinesCounted() int64 {
 // two ints, the map is LanguageStats map with the stats of all parsed files, the two ints
 // are: total files counted and total skipped files.
 func ProgramEntry(path string, config Config) Result {
+	totalFilesFound.Store(0)
+	totalFilesCounted.Store(0)
+	totalSkippedFiles.Store(0)
+	totalLinesCounted.Store(0)
+
 	if isDir(path) {
 		fileArr := make([]fileEntry, 0, 10)
 
@@ -160,7 +165,7 @@ func concurrentCountLinesRecursive(dirs []fileEntry) Result {
 	jobs := make(chan fileEntry, len(dirs))
 	results := make(chan fileStats, len(dirs))
 
-	numWorkers := max(1, runtime.NumCPU() / 2)
+	numWorkers := max(1, runtime.NumCPU()/2)
 	var wg sync.WaitGroup
 
 	for range numWorkers {
@@ -169,6 +174,7 @@ func concurrentCountLinesRecursive(dirs []fileEntry) Result {
 			defer wg.Done()
 			for v := range jobs {
 				if stats, ok := countLinesOfFile(v.fullpath()); ok {
+					totalFilesCounted.Add(1)
 					results <- stats
 				}
 			}
