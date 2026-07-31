@@ -452,6 +452,15 @@ func isDir(path string) bool {
 // the function checks for a "0x00" byte inside the first 8000 bytes, it's how
 // git does this.
 func isBinary(path string) (bool, error) {
+	file, err := os.Stat(path)
+	if err != nil {
+		return false, err
+	}
+
+	if !file.Mode().IsRegular() {
+		return false, err
+	}
+
 	f, err := os.Open(path)
 	if err != nil {
 		return false, err
