@@ -111,15 +111,21 @@ func ProgramEntry(path string, config Config, metrics *Metrics) Result {
 
 		recursion := config.Recursion
 
-		if config.NoConcurrency {
-			dirs := genFileArray(fileArr, getDirs(path), recursion, config, metrics)
-
-			return countLinesRecursive(dirs, metrics)
+		initialDir, err := getDirs(path)
+		if err != nil {
+			fmt.Println("Could not read the inserted path:", err)
+			os.Exit(1)
 		}
 
-		dirs := concurrentGenFileArray(fileArr, getDirs(path), recursion, config, metrics)
+		if config.NoConcurrency {
+			dirSlice := genFileArray(fileArr, initialDir, recursion, config, metrics)
 
-		return concurrentCountLinesRecursive(dirs, metrics)
+			return countLinesRecursive(dirSlice, metrics)
+		}
+
+		dirSlice := concurrentGenFileArray(fileArr, initialDir, recursion, config, metrics)
+
+		return concurrentCountLinesRecursive(dirSlice, metrics)
 	}
 
 	languages := make(map[string]LanguageStats)
@@ -344,7 +350,13 @@ func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Co
 				}
 
 				if v.Entry.IsDir() {
-					results <- dirResult{dirs: getDirs(v.fullpath())}
+					dirs, err := getDirs(v.fullpath())
+					if err != nil {
+						continue
+					}
+
+					results <- dirResult{dirs: dirs}
+
 				} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
 					metrics.FilesFound.Add(1)
 					results <- dirResult{files: []fileEntry{v}}
@@ -388,7 +400,13 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config, metr
 		}
 
 		if v.Entry.IsDir() {
-			results.dirs = append(results.dirs, getDirs(v.fullpath())...)
+			dirs, err := getDirs(v.fullpath())
+			if err != nil {
+				continue
+			}
+
+			results.dirs = append(results.dirs, dirs...)
+
 		} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
 			metrics.FilesFound.Add(1)
 			results.files = append(results.files, v)
@@ -408,16 +426,16 @@ func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config, metr
 
 // getDirs function returns a slice of fileEntry reading a directory based on a dirPath
 // string.
-func getDirs(dirPath string) []fileEntry {
+func getDirs(dirPath string) ([]fileEntry, error) {
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	result := make([]fileEntry, 0, len(entries))
 	for _, e := range entries {
 		result = append(result, fileEntry{Entry: e, Path: dirPath})
 	}
-	return result
+	return result, nil
 }
 
 // IsDir function returns true if path string is == the path of a directory.
