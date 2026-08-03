@@ -375,3 +375,34 @@ func (b *byteSizeValue) Set(value string) error {
 	*b = byteSizeValue(parsed)
 	return nil
 }
+
+func parseByteSize(value string) (int64, error) {
+	value = strings.TrimSpace(strings.ToUpper(value))
+	multipliers := []struct{
+		suffix string
+		value int64
+	}{
+		{"GIB", 1024 * 1024 * 1024}, {"MIB", 1024 * 1024}, {"KIB", 1024},
+		{"GB", 1000 * 1000 * 1000}, {"MB", 1000 * 1000}, {"KB", 1000}, {"B", 1},
+	}
+
+	multiplier = int64(1)
+	for _, item := range multipliers {
+		if strings.HasSuffix(value, item.suffix) {
+			multiplier = item.value
+			value = strings.TrimSpace(strings.TrimSuffix(value, item.suffix))
+			break
+		}
+	}
+
+	number, err := strconv.ParseInt(value, 10, 64)
+	if err != nil || number < 0 {
+		return 0, fmt.Errorf("invalid byte size %q", value)
+	}
+
+	if number > (1<<63-1)/multiplier {
+		return 0, fmt.Errorf("byte size is too large")
+	}
+
+	return number * multiplier, nil
+}
