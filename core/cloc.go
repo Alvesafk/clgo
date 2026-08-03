@@ -511,14 +511,16 @@ func checkCommentPrefix(trimmed string, markers commentMarkers) bool {
 
 func shebangLangs(line []byte) (string, bool) {
 	switch l := string(line); {
-	case strings.Contains(l, "#!/usr/bin/env perl"):
+	case strings.Contains(l, "#!/usr/bin/env perl"), strings.Contains(l, "#!/usr/bin/perl"), strings.Contains(l, "#!/bin/perl"):
 		return "Perl", true
-	case strings.Contains(l, "#!/usr/bin/bash"):
+	case strings.Contains(l, "#!/usr/bin/bash"), strings.Contains(l, "#!/bin/bash"):
 		return "Bash", true
-	case strings.Contains(l, "#!/usr/bin/zsh"):
+	case strings.Contains(l, "#!/usr/bin/zsh"), strings.Contains(l, "#!/bin/zsh"):
 		return "Zsh", true
-	case strings.Contains(l, "#!/usr/bin/fish"):
+	case strings.Contains(l, "#!/usr/bin/fish"), strings.Contains(l, "#!/bin/fish"):
 		return "Fish", true
+	case strings.Contains(l, "#!/usr/bin/python"), strings.Contains(l, "#!/bin/pyhton"):
+		return "Python", true
 	default:
 		return "Unknown", false
 	}
