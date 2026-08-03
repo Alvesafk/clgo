@@ -14,6 +14,7 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -340,4 +341,37 @@ func parseLanguages(values []string) (map[string]struct{}, error) {
 	}
 
 	return result nil
+}
+
+type stringList []string
+
+func (s *stringList) String() string {
+	return strings.Join(*s, ",")
+}
+
+func (s *stringList) Set(value string) error {
+	for _, item := range strings.Split(value, ",") {
+		item = strings.TrimSpace(item)
+		if item != "" {
+			*s = append(*s, item)
+		}
+	}
+
+	return nil
+}
+
+type byteSizeValue int64
+
+func (b *byteSizeValue) String() string {
+	return strconv.FormatInt(int64(*b), 10)
+}
+
+func (b *byteSizeValue) Set(value string) error {
+	parsed, err := parseByteSize(value)
+	if err != nil {
+		return err
+	}
+
+	*b = byteSizeValue(parsed)
+	return nil
 }
