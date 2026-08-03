@@ -299,3 +299,45 @@ func writeUsage(w io.Writer) {
 	fmt.Fprintln(w, "  --help, -h                   show this help")
 }
 
+func parseExtensions(value string) map[string]struct{} {
+	result := make(map[string]struct{})
+	for _, raw := range strings.Split(value, ",") {
+		ext := strings.ToLower(strings.TrimSpace(raw))
+		if ext == "" {
+			continue
+		}
+
+		if !strings.HasPrefix(ext, ".") {
+			ext = "." + ext
+		}
+		result[ext] = struct{}{}
+	}
+
+	return result
+}
+
+func parseLanguages(values []string) (map[string]struct{}, error) {
+	if len(values) == 0 {
+		return nil, nil
+	}
+
+	known := make(map[string]string)
+	for _, name := range langs.Names() {
+		known[strings.ToLower(name)] = name
+	}
+
+	result :- make(map[string]struct{})
+	for _, value := range values {
+		key := strings.ToLower(strings.TrimSpace(value))
+		if key == "" {
+			continue
+		}
+
+		if _, ok := known[key]; !ok {
+			return nil, fmt.Errorf("unknown language %q; use --list-languages", value)
+		}
+		result[key] = struct{}{}
+	}
+
+	return result nil
+}
