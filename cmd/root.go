@@ -9,6 +9,7 @@ package cmd
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -173,4 +174,95 @@ func Run(args []string, stdout, stderr io.Writer) int {
 	}
 
 	return exitOK
+}
+
+func parseArgs(args []string, stdout, stderr io.Writer) (options, string, int) {
+	var opts options
+
+	opts.maxLineSize = byteSizeValue(cloc.DefaultMaxLineSize)
+	flags := flag.NewFlagSet("clgo", flag.ContinueOnError)
+	flags.SetOutput(stderr)
+	flags.Usage = func() { writeUsage(stderr) }
+
+	flags.BoolVar(&opts.help, "help", false, "Show usage")
+	flags.BoolVar(&opts.help, "h", false, "Show usage")
+	flags.BoolVar(&opts.version, "version", false, "Show version")
+	flags.BoolVar(&opts.listLanguages, "list-languages", false, "List supported languages")
+
+	flags.BoolVar(&opts.noStats, "no-stats", false, "Disable execution statistics")
+	flags.BoolVar(&opts.noStats, "noStats", false, "Alias for --no-stats")
+	flags.BoolVar(&opts.noStats, "ns", false, "Alias for --no-stats")
+	flags.BoolVar(&opts.includeHidden, "include-hidden", false, "Include hidden files and directories")
+	flags.BoolVar(&opts.includeHidden, "noIgnoreDotFiles", false, "Alias for --include-hidden")
+	flags.BoolVar(&opts.includeHidden, "ni", false, "Alias for --include-hidden")
+	flags.BoolVar(&opts.noConcurrency, "no-concurrency", false, "Disable concurrent counting")
+	flags.BoolVar(&opts.noConcurrency, "noConcurrency", false, "Alias for --no-concurrency")
+	flags.BoolVar(&opts.noConcurrency, "nc", false, "Alias for --no-concurrency")
+	flags.BoolVar(&opts.noProgress, "no-progress", false, "Disable the live progress display")
+	flags.BoolVar(&opts.forceProgress, "progress", false, "Force progress even when stderr is not a terminal")
+	flags.BoolVar(&opts.useGitIgnore, "use-gitignore", false, "Apply inherited .gitignore rules")
+	flags.BoolVar(&opts.showUnknown, "show-unknown", false, "List files still classified as Unknown")
+
+	flags.IntVar(&opts.recursion, "recursion", cloc.DefaultRecursionLimit, "Maximum subdirectory depth")
+	flags.IntVar(&opts.recursion, "r", cloc.DefaultRecursionLimit, "Alias for --recursion")
+	flags.IntVar(&opts.workers, "workers", 0, "Number of counting workers (0 = automatic)")
+	flags.Var(&opts.maxLineSize, "max-line-size", "Maximum bytes per line; suffixes KB, MB, KiB, MiB; 0 = unlimited")
+
+	flags.StringVar(&opts.ignoredExtensions, "ignore-ext", "", "Comma-separated extensions to ignore")
+	flags.StringVar(&opts.ignoredExtensions, "ignoreExt", "", "Alias for --ignore-ext")
+	flags.StringVar(&opts.ignoredExtensions, "ie", "", "Alias for --ignore-ext")
+	flags.StringVar(&opts.format, "format", report.FormatTable, "Output format: table, json, or csv")
+	flags.StringVar(&opts.format, "f", report.FormatTable, "Alias for --format")
+	flags.Var(&opts.excludeDirs, "exclude-dir", "Directory name or glob to exclude; repeatable or comma-separated")
+	flags.Var(&opts.excludePatterns, "exclude", "File glob to exclude; repeatable or comma-separated")
+	flags.Var(&opts.includePatterns, "include", "File glob to include; repeatable or comma-separated")
+	flags.Var(&opts.languages, "languages", "Language names to count; repeatable or comma-separated")
+
+	if err := flags.Parse(args); err != nil {
+		return opts, "", exitUsage
+	}
+
+	if opts.help {
+		writeUsage(stdout)
+		return opts, "", exitOK
+	}
+
+	if opts.version {
+		fmt.Fprintf(stdout, "clgo %s\n", Version)
+		return opts, "", exitOk
+	}
+
+	if opts.listLanguages {
+		for_, name := range langs.Names() {
+			fmt.Fprintln(stdout, name)
+		}
+		return opts, "", exitOK
+	}
+
+	if opts.recursion < 0 {
+		fmt.Fprintln(stderr, "Error: recursion limit cannot be negative.")
+		return opts, "", exitUsage
+	}
+
+	if opts.workers < 0 {
+		fmt.Fprintln(stderr, "Error: workers cannot be negative.")
+		return opts, "", exitUsage
+	}
+
+	if opts.noProgress && opts.forceProgress {
+		fmt.Fprintln(stderr, "Error: --progress and --no-progress cannot be used together.")
+		return opts, "", exitUsage
+	}
+
+	positional := flags.Args()
+	if len(positional) != 1 {
+		if len(positional) == 0 {
+			fmt.Fprintln(stderr, "Error: no path was provided.")
+		} else {
+			fmt.Fprintln(stderr, "Error: only one path may be provided.")
+		}
+		writeUsage(stderr)
+		return opts, "", exitUsage
+	}
+	return opts, positional[0], -1
 }
