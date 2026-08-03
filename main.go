@@ -71,17 +71,17 @@ func main() {
 	if len(args) < 1 {
 		ansi.Red.FgPrintln("No path was passed to the program, aborting.")
 		usage()
-		return
+		os.Exit(2)
 	} else if len(args) > 1 {
 		ansi.Red.FgPrintln("Too many paths were passed to the program, aborting.")
 		usage()
-		return
+		os.Exit(2)
 	}
 
 	path, err := os.Stat(args[0])
 	if err != nil {
 		ansi.Red.FgPrintf("Error: %s, aborting.\n", err)
-		return
+		os.Exit(1)
 	}
 
 	if ok, err := core.IsBinary(args[0]); err == nil && ok {
