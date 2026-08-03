@@ -266,3 +266,36 @@ func parseArgs(args []string, stdout, stderr io.Writer) (options, string, int) {
 	}
 	return opts, positional[0], -1
 }
+
+func writeUsage(w io.Writer) {
+	fmt.Fprintln(w, "clgo - count lines of code, made in go")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Usage:")
+	fmt.Fprintln(w, "  clgo [flags] <file-or-directory>")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Core flags:")
+	fmt.Fprintln(w, "  --format, -f FORMAT          table, json, or csv")
+	fmt.Fprintln(w, "  --recursion, -r N            maximum subdirectory depth")
+	fmt.Fprintln(w, "  --workers N                  counting workers; 0 selects automatically")
+	fmt.Fprintln(w, "  --max-line-size SIZE         line limit such as 16MiB; 0 is unlimited")
+	fmt.Fprintln(w, "  --no-concurrency             run traversal and counting sequentially")
+	fmt.Fprintln(w, "  --no-stats                   disable human-readable statistics")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Filtering:")
+	fmt.Fprintln(w, "  --include-hidden             include hidden files and directories")
+	fmt.Fprintln(w, "  --ignore-ext LIST            extensions to ignore, e.g. .go,.c")
+	fmt.Fprintln(w, "  --exclude-dir GLOB           exclude directories; repeatable")
+	fmt.Fprintln(w, "  --exclude GLOB               exclude files; repeatable")
+	fmt.Fprintln(w, "  --include GLOB               include only matching files; repeatable")
+	fmt.Fprintln(w, "  --languages LIST             include only named languages")
+	fmt.Fprintln(w, "  --use-gitignore              apply .gitignore files")
+	fmt.Fprintln(w, "  --show-unknown               list files still classified as Unknown")
+	fmt.Fprintln(w)
+	fmt.Fprintln(w, "Terminal and information:")
+	fmt.Fprintln(w, "  --progress                   force live progress")
+	fmt.Fprintln(w, "  --no-progress                disable live progress")
+	fmt.Fprintln(w, "  --list-languages             list supported language names")
+	fmt.Fprintln(w, "  --version                    show version")
+	fmt.Fprintln(w, "  --help, -h                   show this help")
+}
+
