@@ -35,7 +35,7 @@ func countDirectorySequential(ctx context.Context, root string, config Config, m
 		entries, err := os.ReadDir(job.path)
 		if err != nil {
 			if job.depth == 0 {
-				fmt.Errorf("read directory %q: %w", job.path, err)
+				return fmt.Errorf("read directory %q: %w", job.path, err)
 			}
 
 			addDirectoryWarning(result, metrics, job.path, err)

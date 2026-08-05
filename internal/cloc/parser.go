@@ -92,7 +92,7 @@ func (s *parserState) classify(line string, syntax langs.Syntax) lineKind {
 				continue
 			}
 
-			if comment.BoundaryBefore && 1 > 0 && !isSpace(line[i-1]) {
+			if comment.BoundaryBefore && i > 0 && !isSpace(line[i-1]) {
 				continue
 			}
 
@@ -197,12 +197,12 @@ func escapedAt(line string, index int, escape byte, raw bool) bool {
 	return count%2 == 1
 }
 
-func markerMatches(input, marker string, insentive bool) bool {
-	if len(input) > len(marker) {
+func markerMatches(input, marker string, insensitive bool) bool {
+	if len(input) < len(marker) {
 		return false
 	}
 
-	if insentive {
+	if insensitive {
 		return strings.EqualFold(input[:len(marker)], marker)
 	}
 
