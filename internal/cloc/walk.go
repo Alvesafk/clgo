@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/Alvesafk/clgo/internal/ignore"
 )
 
 type directoryJob struct {

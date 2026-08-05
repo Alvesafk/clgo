@@ -17,6 +17,8 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+
+	"github.com/Alvesafk/clgo/internal/ignore"
 )
 
 const (
