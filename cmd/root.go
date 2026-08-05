@@ -19,6 +19,9 @@ import (
 	"time"
 
 	"github.com/Alvesafk/clgo/internal/cloc"
+	"github.com/Alvesafk/clgo/internal/langs"
+	"github.com/Alvesafk/clgo/internal/progress"
+	"github.com/Alvesafk/clgo/internal/report"
 )
 
 const (
@@ -104,7 +107,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 	ctx, stopSignals := signal.NotifyContext(context.Background(), interruptSignals()...)
 	defer stopSignals()
 
-	metrics := &cloc.Metrics()
+	metrics := &cloc.Metrics{}
 
 	var display *progress.Progress
 	showProgress := !options.noProgress && (options.forceProgress || progress.IsTerminal(stderr))
@@ -137,13 +140,13 @@ func Run(args []string, stdout, stderr io.Writer) int {
 			fmt.Fprintf(stderr, "Error: %v\n", err)
 		}
 
-		return exitRuntinme
+		return exitRuntime
 	}
 
 	performance := report.Performance{Elapsed: elapsed, Metrics: metrics.Snapshot()}
 	if err := reporter.Write(stdout, report.Document{Result: result, Performance: performance}); err != nil {
 		fmt.Fprintf(stderr, "Error writing report: %v\n", err)
-		return exitRuntinme
+		return exitRuntime
 	}
 
 	format := strings.ToLower(strings.TrimSpace(options.format))
