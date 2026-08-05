@@ -17,11 +17,13 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Alvesafk/clgo/internal/cloc"
 )
 
 const (
 	exitOK = iota
-	exitRuntinme
+	exitRuntime
 	exitUsage
 	exitInterrupted = 130
 )
@@ -39,7 +41,7 @@ type options struct {
 	noProgress        bool
 	forceProgress     bool
 	useGitIgnore      bool
-	shownUnknown      bool
+	showUnknown       bool
 	recursion         int
 	workers           int
 	maxLineSize       byteSizeValue
@@ -81,7 +83,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 
 	config := cloc.Config{
 		IncludeHidden:    options.includeHidden,
-		noConcurrency:    options.noConcurrency,
+		NoConcurrency:    options.noConcurrency,
 		RecursionLimit:   options.recursion,
 		IgnoreExtensions: parseExtensions(options.ignoredExtensions),
 		Workers:          options.workers,
@@ -91,7 +93,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		IncludePatterns:  options.includePatterns,
 		UseGitIgnore:     options.useGitIgnore,
 		Languages:        languageFilter,
-		CollectUnknowns:  options.shownUnknown,
+		CollectUnknowns:  options.showUnknown,
 	}
 
 	if err := cloc.ValidateConfigPatterns(config); err != nil {
@@ -99,7 +101,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		return exitUsage
 	}
 
-	ctx, stopSignals := signal.NotifyContext(context.Background(), interruptSiganls()...)
+	ctx, stopSignals := signal.NotifyContext(context.Background(), interruptSignals()...)
 	defer stopSignals()
 
 	metrics := &cloc.Metrics()
@@ -139,8 +141,8 @@ func Run(args []string, stdout, stderr io.Writer) int {
 	}
 
 	performance := report.Performance{Elapsed: elapsed, Metrics: metrics.Snapshot()}
-	if err != nil := reporter.Write(stdout, report.Document{Result: result, Performance: performance}); err != nil {
-		fmt.Fprinf(stderr, "Error writing report: %v\n", err)
+	if err := reporter.Write(stdout, report.Document{Result: result, Performance: performance}); err != nil {
+		fmt.Fprintf(stderr, "Error writing report: %v\n", err)
 		return exitRuntinme
 	}
 
@@ -150,12 +152,12 @@ func Run(args []string, stdout, stderr io.Writer) int {
 	}
 
 	if format == report.FormatTable {
-		for_, warning := range result.Warnings {
+		for _, warning := range result.Warnings {
 			fmt.Fprintf(stderr, "Warning [%s] %s: %s\n", warning.Kind, warning.Path, warning.Error)
 		}
 	}
 
-	if options.shownUnknown && len(result.UnknownFiles) > 0 {
+	if options.showUnknown && len(result.UnknownFiles) > 0 {
 		fmt.Fprintln(stderr, "Unknown files:")
 		for _, filename := range result.UnknownFiles {
 			fmt.Fprintf(stderr, " %s\n", filename)
@@ -169,7 +171,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		}
 
 		if err := report.WriteStats(statsWriter, result, performance); err != nil {
-			fmt.Fprinttf(stderr, "Error writing statistics: %v\n", err)
+			fmt.Fprintf(stderr, "Error writing statistics: %v\n", err)
 			return exitRuntime
 		}
 	}
@@ -230,11 +232,11 @@ func parseArgs(args []string, stdout, stderr io.Writer) (options, string, int) {
 
 	if opts.version {
 		fmt.Fprintf(stdout, "clgo %s\n", Version)
-		return opts, "", exitOk
+		return opts, "", exitOK
 	}
 
 	if opts.listLanguages {
-		for_, name := range langs.Names() {
+		for _, name := range langs.Names() {
 			fmt.Fprintln(stdout, name)
 		}
 		return opts, "", exitOK
@@ -327,7 +329,7 @@ func parseLanguages(values []string) (map[string]struct{}, error) {
 		known[strings.ToLower(name)] = name
 	}
 
-	result :- make(map[string]struct{})
+	result := make(map[string]struct{})
 	for _, value := range values {
 		key := strings.ToLower(strings.TrimSpace(value))
 		if key == "" {
@@ -340,7 +342,7 @@ func parseLanguages(values []string) (map[string]struct{}, error) {
 		result[key] = struct{}{}
 	}
 
-	return result nil
+	return result, nil
 }
 
 type stringList []string
@@ -378,15 +380,15 @@ func (b *byteSizeValue) Set(value string) error {
 
 func parseByteSize(value string) (int64, error) {
 	value = strings.TrimSpace(strings.ToUpper(value))
-	multipliers := []struct{
+	multipliers := []struct {
 		suffix string
-		value int64
+		value  int64
 	}{
 		{"GIB", 1024 * 1024 * 1024}, {"MIB", 1024 * 1024}, {"KIB", 1024},
 		{"GB", 1000 * 1000 * 1000}, {"MB", 1000 * 1000}, {"KB", 1000}, {"B", 1},
 	}
 
-	multiplier = int64(1)
+	multiplier := int64(1)
 	for _, item := range multipliers {
 		if strings.HasSuffix(value, item.suffix) {
 			multiplier = item.value
