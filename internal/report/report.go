@@ -102,7 +102,7 @@ func WriteStats(w io.Writer, result cloc.Result, performance Performance) error 
 		}
 
 		for _, row := range rows {
-			if _, err := fmt.Fprintf(w, " %-18 :: %d\n", row.label, row.value); err != nil {
+			if _, err := fmt.Fprintf(w, " %-18s :: %d\n", row.label, row.value); err != nil {
 				return err
 			}
 		}
