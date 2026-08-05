@@ -66,7 +66,7 @@ func (tableReporter) Write(w io.Writer, document Document) error {
 func writeBorder(w *strings.Builder, left, middle, right string, widths []int) {
 	fmt.Fprint(w, left)
 	for i, width := range widths {
-		fmt.Fprint(w, strings.Repeat("-", width+2))
+		fmt.Fprint(w, strings.Repeat("─", width+2))
 		if i < len(widths)-1 {
 			fmt.Fprint(w, middle)
 		}
