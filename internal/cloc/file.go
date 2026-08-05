@@ -14,6 +14,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/Alvesafk/clgo/internal/langs"
 )
 
 func processFile(ctx context.Context, filename string, config Config) fileOutcome {
@@ -58,7 +60,7 @@ func processFile(ctx context.Context, filename string, config Config) fileOutcom
 		return outcome
 	}
 
-	syntax, _ := lang.SyntaxFor(language)
+	syntax, _ := langs.SyntaxFor(language)
 	state := newParserState()
 	reader := bufio.NewReaderSize(file, 64*1024)
 	stats := fileStats{Languages: language}

@@ -19,6 +19,7 @@ import (
 	"sync/atomic"
 
 	"github.com/Alvesafk/clgo/internal/ignore"
+	"github.com/Alvesafk/clgo/internal/langs"
 )
 
 const (

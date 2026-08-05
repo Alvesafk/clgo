@@ -6,6 +6,8 @@ package cloc
 
 import (
 	"strings"
+
+	"github.com/Alvesafk/clgo/internal/langs"
 )
 
 type lineKind uint8
@@ -86,7 +88,7 @@ func (s *parserState) classify(line string, syntax langs.Syntax) lineKind {
 
 		matched := false
 		for _, comment := range syntax.LineComments {
-			if comment.LineStartsOnly && !lineStart {
+			if comment.LineStartOnly && !lineStart {
 				continue
 			}
 
@@ -106,7 +108,7 @@ func (s *parserState) classify(line string, syntax langs.Syntax) lineKind {
 		}
 
 		for index, block := range syntax.BlockComments {
-			if block.LineStartsOnly && !lineStart {
+			if block.LineStartOnly && !lineStart {
 				continue
 			}
 

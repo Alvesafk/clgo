@@ -13,6 +13,7 @@ import (
 	"sync"
 
 	"github.com/Alvesafk/clgo/internal/ignore"
+	"github.com/Alvesafk/clgo/internal/langs"
 )
 
 type directoryJob struct {
