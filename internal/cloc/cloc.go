@@ -2,526 +2,344 @@
 SPDX-License-Identifier: GPL-3.0-only
 Copyright (c) 2026 Alvesafk.
 
-Core package has the business logic of clgo.
+Package cloc contains the line-couting business logic.
 */
-package core
+package cloc
 
 import (
-	"bufio"
-	"bytes"
+	"context"
+	"errors"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"runtime"
-	"slices"
+	"sort"
 	"strings"
 	"sync"
 	"sync/atomic"
 )
 
-// Config struct for optional flags defined in main.go.
+const (
+	DefaultRecursionLimit = 20
+	DefaultMaxLineSize    = 16 * 1024 * 1024
+	DefaultMaxWorkers     = 8
+)
+
+var (
+	ErrBinaryFile  = errors.New("file is binary")
+	ErrLineTooLong = errors.New("line exceeds maximum size")
+)
+
 type Config struct {
-	NoStats           bool
-	NoIgnoreDotFiles  bool
-	NoConcurrency     bool
-	Recursion         int
-	StringExtToIgnore string
-	sliceExtToIgnore  []string
+	IncludeHidden    bool
+	NoConcurrency    bool
+	RecursionLimit   int
+	IgnoreExtensions map[string]struct{}
+	Workers          int
+	MaxLineSize      int
+	ExcludeDirs      []string
+	ExcludePatterns  []string
+	IncludePatterns  []string
+	UseGitIgnore     bool
+	Languages        map[string]struct{}
+	CollectUnknowns  bool
 }
 
-func (c *Config) SetExtToIgnoreSlice() {
-	if c.StringExtToIgnore != "" {
-		if strings.Contains(c.StringExtToIgnore, ",") {
-			c.sliceExtToIgnore = strings.Split(c.StringExtToIgnore, ",")
-		} else {
-			c.sliceExtToIgnore = append(c.sliceExtToIgnore, c.StringExtToIgnore)
-		}
-	}
-}
-
-// fileEntry struct has the actual os.DirEntry and the path of the file.
-type fileEntry struct {
-	Entry os.DirEntry
-	Path  string
-	Ext   string
-}
-
-// fullpath method retuns a string with the full path of f file.
-func (f fileEntry) fullpath() string {
-	return filepath.Join(f.Path, f.Entry.Name())
-}
-
-func (f fileEntry) ext() string {
-	return filepath.Ext(strings.ToLower(f.fullpath()))
-}
-
-// dirResult is used when getting the dirs / files when recrusing in a directory.
-type dirResult struct {
-	dirs  []fileEntry
-	files []fileEntry
-}
-
-// fileStats struct represent stats from a file.
-type fileStats struct {
-	Language     string
-	CodeLines    int
-	CommentLines int
-	BlankLines   int
-}
-
-// LanguageStats is the main struct passed to main, it has the total of files, code lines,
-// comment lines and blank lines.
 type LanguageStats struct {
-	Files        int
-	CodeLines    int
-	CommentLines int
-	BlankLines   int
+	Files        int `json:"files"`
+	BlankLines   int `json:"blank"`
+	CommentLines int `json:"comment"`
+	CodeLines    int `json:"code"`
 }
 
-// comment markers represents how a comment is defined in a language, it's one liner and
-// multi line variants.
-type commentMarkers struct {
-	Line  []string
-	Open  string
-	Close string
+type Warning struct {
+	Path  string `json:"path"`
+	Kind  string `json:"kind"`
+	Error string `json:"error"`
 }
 
 type Result struct {
-	Languages map[string]LanguageStats
+	Source       string                   `json:"source"`
+	Languages    map[string]LanguageStats `json:"languages"`
+	Warnings     []Warning                `json:"warnings,omitempty"`
+	UnknownFiles []string                 `json:"-"`
+	Metrics      MetricsSnapshot          `json:"metrics"`
+	IsDirectory  bool                     `json:"-"`
 }
 
-const (
-	RECURSION_LIMIT = 20 // Limit for recursion.
-)
+func (r Result) Total() LanguageStats {
+	var total LanguageStats
+	for _, stats := range r.Languages {
+		total.Files += stats.Files
+		total.BlankLines += stats.BlankLines
+		total.CommentLines += stats.CommentLines
+		total.CodeLines += stats.CodeLines
+	}
+
+	return total
+}
+
+func (r Result) LanguageNames() []string {
+	names := make([]string, 0, len(r.Languages))
+	for name := range r.Languages {
+		names = append(names, name)
+	}
+
+	sort.Slice(names, func(i, j int) bool {
+		left := r.Languages[names[i]]
+		right := r.Languages[names[j]]
+
+		if left.CodeLines == right.CodeLines {
+			if left.CommentLines == right.CommentLines {
+				return names[i] < names[j]
+			}
+
+			return left.CommentLines > right.CommentLines
+		}
+
+		return left.CodeLines > right.CodeLines
+	})
+
+	return names
+}
 
 type Metrics struct {
-	FilesFound   atomic.Int64
-	FilesCounted atomic.Int64
-	SkippedFiles atomic.Int64
-	LinesCounted atomic.Int64
+	filesDiscovered   atomic.Int64
+	filesCounted      atomic.Int64
+	filesIgnored      atomic.Int64
+	binaryFiles       atomic.Int64
+	unsupportedFiles  atomic.Int64
+	failedFiles       atomic.Int64
+	directoriesFailed atomic.Int64
+	linesCounted      atomic.Int64
 }
 
-// ProgramEntry function receives a path string and a config struct, it returns a map and
-// two ints, the map is LanguageStats map with the stats of all parsed files, the two ints
-// are: total files counted and total skipped files.
-func ProgramEntry(path string, config Config, metrics *Metrics) Result {
+type MetricsSnapshot struct {
+	FilesDiscovered   int64 `json:"files_discovered"`
+	FilesCounted      int64 `json:"files_counted"`
+	FilesIgnored      int64 `json:"files_ignored"`
+	BinaryFiles       int64 `json:"binary_files"`
+	UnsupportedFiles  int64 `json:"unsupported_files"`
+	FailedFiles       int64 `json:"failed_files"`
+	DirectoriesFailed int64 `json:"directories_failed"`
+	LinesCounted      int64 `json:"LinesCounted"`
+}
 
-	if isDir(path) {
-		fileArr := make([]fileEntry, 0, 10)
-
-		recursion := config.Recursion
-
-		initialDir, err := getDirs(path)
-		if err != nil {
-			fmt.Println("Could not read the inserted path:", err)
-			os.Exit(1)
-		}
-
-		if config.NoConcurrency {
-			dirSlice := genFileArray(fileArr, initialDir, recursion, config, metrics)
-
-			return countLinesRecursive(dirSlice, metrics)
-		}
-
-		dirSlice := concurrentGenFileArray(fileArr, initialDir, recursion, config, metrics)
-
-		return concurrentCountLinesRecursive(dirSlice, metrics)
+func (m *Metrics) Snapshot() MetricsSnapshot {
+	if m == nil {
+		return MetricsSnapshot{}
 	}
 
-	languages := make(map[string]LanguageStats)
-
-	stats, ok := countLinesOfFile(path, metrics)
-	if ok {
-		languages[stats.Language] = LanguageStats{
-			Files:        1,
-			CodeLines:    stats.CodeLines,
-			CommentLines: stats.CommentLines,
-			BlankLines:   stats.BlankLines,
-		}
-	}
-
-	return Result{
-		Languages: languages,
+	return MetricsSnapshot{
+		FilesDiscovered:   m.filesDiscovered.Load(),
+		FilesCounted:      m.filesCounted.Load(),
+		FilesIgnored:      m.filesIgnored.Load(),
+		BinaryFiles:       m.binaryFiles.Load(),
+		UnsupportedFiles:  m.unsupportedFiles.Load(),
+		FailedFiles:       m.failedFiles.Load(),
+		DirectoriesFailed: m.directoriesFailed.Load(),
+		LinesCounted:      m.linesCounted.Load(),
 	}
 }
 
-// countLinesRecursive function count the lines of a file slice, it uses concorrency, the
-// function create workers to count the lines of each directory file concorrently.
-func concurrentCountLinesRecursive(dirs []fileEntry, metrics *Metrics) Result {
-	jobs := make(chan fileEntry, len(dirs))
-	results := make(chan fileStats, len(dirs))
-
-	numWorkers := max(1, runtime.NumCPU()/2)
-	var wg sync.WaitGroup
-
-	for range numWorkers {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for v := range jobs {
-				if stats, ok := countLinesOfFile(v.fullpath(), metrics); ok {
-					metrics.FilesCounted.Add(1)
-					results <- stats
-				}
-			}
-		}()
+func normalizeConfig(config Config) Config {
+	if config.MaxLineSize < 0 {
+		config.MaxLineSize = DefaultMaxLineSize
 	}
 
-	for _, v := range dirs {
-		jobs <- v
-	}
-	close(jobs)
+	if config.Workers <= 0 {
+		config.Workers = runtime.NumCPU()
+		if config.Workers > DefaultMaxWorkers {
+			config.Workers = DefaultMaxWorkers
+		}
 
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
-
-	languages := make(map[string]LanguageStats)
-	for r := range results {
-		lang := languages[r.Language]
-		lang.Files++
-		lang.CodeLines += r.CodeLines
-		lang.CommentLines += r.CommentLines
-		lang.BlankLines += r.BlankLines
-		languages[r.Language] = lang
-	}
-
-	return Result{
-		Languages: languages,
-	}
-}
-
-func countLinesRecursive(dirs []fileEntry, metrics *Metrics) Result {
-	var partialResults []fileStats
-	for _, v := range dirs {
-		if stats, ok := countLinesOfFile(v.fullpath(), metrics); ok {
-			metrics.FilesCounted.Add(1)
-			partialResults = append(partialResults, stats)
+		if config.Workers < 1 {
+			config.Workers = 1
 		}
 	}
 
-	languages := make(map[string]LanguageStats)
-	for _, r := range partialResults {
-		lang := languages[r.Language]
-		lang.Files++
-		lang.CodeLines += r.CodeLines
-		lang.CommentLines += r.CommentLines
-		lang.BlankLines += r.BlankLines
-		languages[r.Language] = lang
+	if config.NoConcurrency {
+		config.Workers = 1
 	}
 
-	return Result{
-		Languages: languages,
-	}
+	return config
 }
 
-// countLinesOfFile function parse a file couting it's code, blank and comment lines.
-func countLinesOfFile(filename string, metrics *Metrics) (fileStats, bool) {
-	if isDir(filename) {
-		return fileStats{}, false
+func Count(ctx context.Context, path string, config Config, metrics *Metrics) (Result, error) {
+	if metrics == nil {
+		metrics = &Metrics{}
 	}
 
-	if slices.Contains(filenameToIgnore, filepath.Base(filename)) {
-		return fileStats{}, false
+	if config.RecursionLimit < 0 {
+		return Result{}, fmt.Errorf("recursion limit cannot be negative")
 	}
 
-	file, err := os.Open(filename)
+	config = normalizeConfig(config)
+
+	absolute, err := os.Stat(path)
 	if err != nil {
-		metrics.SkippedFiles.Add(1)
-		return fileStats{}, false
-	}
-	defer file.Close()
-
-	language, ignore := languageFromExt(filename)
-	if ignore {
-		return fileStats{}, false
+		return Result{}, fmt.Errorf("stat %q: %w", path, err)
 	}
 
-	buf := make([]byte, 100)
-	file.Read(buf)
-	if lTmp, ok := shebangLangs(buf); ok {
-		language = lTmp
+	result := Result{
+		Source:      path,
+		Languages:   make(map[string]LanguageStats),
+		IsDirectory: absolute.IsDir(),
 	}
 
-	_, err = file.Seek(0, io.SeekStart)
+	if !absolute.IsDir() {
+		metrics.filesDiscovered.Add(1)
+		outcome := processFile(ctx, path, config)
+		if outcome.binary {
+			metrics.binaryFiles.Add(1)
+			return Result{}, ErrBinaryFile
+		}
+
+		if outcome.err != nil {
+			metrics.failedFiles.Add(1)
+			return Result{}, outcome.err
+		}
+
+		applyOutcome(&result, outcome, metrics)
+		result.Metrics = metrics.Snapshot()
+		return result, nil
+	}
+
+	matcher, err := ignore.NewMatcher(path, config.UseGitIgnore)
 	if err != nil {
-		metrics.SkippedFiles.Add(1)
-		return fileStats{}, false
+		return Result{}, fmt.Errorf("load ignore rules: %w", err)
 	}
 
-	markers, hasSyntax := commentSyntax[language]
-
-	stats := fileStats{Language: language}
-	var insideBlock bool
-
-	scanner := bufio.NewScanner(file)
-	scanner.Buffer(make([]byte, 64*1024), 16*1024*1024)
-	for scanner.Scan() {
-		line := scanner.Text()
-		trimmed := strings.TrimSpace(line)
-
-		if trimmed == "" {
-			stats.BlankLines++
-			continue
-		}
-
-		if hasSyntax {
-			if insideBlock {
-				stats.CommentLines++
-				if markers.Close != "" && strings.Contains(trimmed, markers.Close) {
-					insideBlock = false
-				}
-				continue
-			}
-
-			if markers.Open != "" && strings.HasPrefix(trimmed, markers.Open) {
-				stats.CommentLines++
-				if !strings.Contains(trimmed, markers.Close) {
-					insideBlock = true
-				}
-				continue
-			}
-
-			if len(markers.Line) > 0 && checkCommentPrefix(trimmed, markers) {
-				stats.CommentLines++
-				continue
-			}
-		}
-
-		stats.CodeLines++
+	if config.NoConcurrency {
+		err = countDirectorySequential(ctx, path, config, matcher, &result, metrics)
+	} else {
+		err = countDirectoryPipeline(ctx, path, config, matcher, &result, metrics)
 	}
 
-	if err := scanner.Err(); err != nil {
-		metrics.SkippedFiles.Add(1)
-		return fileStats{}, false
-	}
-
-	metrics.LinesCounted.Add(int64(stats.CodeLines) + int64(stats.CommentLines) + int64(stats.BlankLines))
-
-	return stats, true
-}
-
-// Returns name of the lang after comparing it to the suffix map, if not found returns
-// "Unknown"
-func languageFromExt(filename string) (string, bool) {
-	baseName := filepath.Base(filename)
-
-	ext := filepath.Ext(strings.ToLower(filename))
-	if !strings.Contains(ext, ".") {
-		if file, ok := filenameException[baseName]; ok {
-			return file, false
-		}
-
-		return "Unknown", false
-	}
-
-	if slices.Contains(extToIgnore, ext) {
-		return "", true
-	}
-
-	if lang, ok := extToLanguage[ext]; ok {
-		return lang, false
-	}
-
-	return "Unknown", false
-}
-
-// genFileArray function get all the files of a dir and subdir using a slice of fileEntry
-// as base, it uses recursion and concorrency with workers to go aggroupate all files into
-// a file slice.
-func concurrentGenFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config, metrics *Metrics) []fileEntry {
-	if len(dirArr) == 0 {
-		return fileArr
-	}
-
-	jobs := make(chan fileEntry, len(dirArr))
-	results := make(chan dirResult, len(dirArr))
-
-	numWorkers := runtime.NumCPU() / 2
-
-	var wg sync.WaitGroup
-	for range numWorkers {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for v := range jobs {
-				if skipFile(v, config) {
-					continue
-				}
-
-				if v.Entry.IsDir() {
-					dirs, err := getDirs(v.fullpath())
-					if err != nil {
-						continue
-					}
-
-					results <- dirResult{dirs: dirs}
-
-				} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
-					metrics.FilesFound.Add(1)
-					results <- dirResult{files: []fileEntry{v}}
-				}
-			}
-		}()
-	}
-
-	for _, v := range dirArr {
-		jobs <- v
-	}
-	close(jobs)
-
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
-
-	var nextDirArr []fileEntry
-	for r := range results {
-		fileArr = append(fileArr, r.files...)
-		nextDirArr = append(nextDirArr, r.dirs...)
-	}
-
-	if len(nextDirArr) > 0 && recLimit > 0 {
-		fileArr = concurrentGenFileArray(fileArr, nextDirArr, recLimit-1, config, metrics)
-	}
-
-	return fileArr
-}
-
-func genFileArray(fileArr, dirArr []fileEntry, recLimit int, config Config, metrics *Metrics) []fileEntry {
-	if len(dirArr) == 0 {
-		return fileArr
-	}
-
-	var results dirResult
-	for _, v := range dirArr {
-		if skipFile(v, config) {
-			continue
-		}
-
-		if v.Entry.IsDir() {
-			dirs, err := getDirs(v.fullpath())
-			if err != nil {
-				continue
-			}
-
-			results.dirs = append(results.dirs, dirs...)
-
-		} else if !slices.Contains(config.sliceExtToIgnore, v.ext()) {
-			metrics.FilesFound.Add(1)
-			results.files = append(results.files, v)
-		}
-	}
-
-	var nextDirArr []fileEntry
-	fileArr = append(fileArr, results.files...)
-	nextDirArr = append(nextDirArr, results.dirs...)
-
-	if len(nextDirArr) > 0 && recLimit > 0 {
-		fileArr = genFileArray(fileArr, nextDirArr, recLimit-1, config, metrics)
-	}
-
-	return fileArr
-}
-
-// getDirs function returns a slice of fileEntry reading a directory based on a dirPath
-// string.
-func getDirs(dirPath string) ([]fileEntry, error) {
-	entries, err := os.ReadDir(dirPath)
 	if err != nil {
-		return nil, err
+		return Result{}, err
 	}
-	result := make([]fileEntry, 0, len(entries))
-	for _, e := range entries {
-		result = append(result, fileEntry{Entry: e, Path: dirPath})
+
+	sort.Slice(result.Warnings, func(i, j int) bool {
+		if result.Warnings[i].Path == result.Warnings[j].Path {
+			return result.Warnings[i].Kind < result.Warnings[j].Kind
+		}
+
+		return result.Warnings[i].Path < result.Warnings[j].Path
+	})
+
+	for i, filename := range result.UnknownFiles {
+		if relative, relErr := filepath.Rel(path, filename); relErr == nil {
+			result.UnknownFiles[i] = filepath.ToSlash(relative)
+		}
 	}
+
+	sort.Strings(result.UnknownFiles)
+	result.Metrics = metrics.Snapshot()
 	return result, nil
 }
 
-// IsDir function returns true if path string is == the path of a directory.
-func isDir(path string) bool {
-	fi, err := os.Stat(path)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	if fi.Mode().IsDir() {
-		return true
-	}
-
-	return false
+type fileStats struct {
+	Languages    string
+	CodeLines    int
+	CommentLines int
+	BlankLines   int
 }
 
-// IsBinary function returns true if path string is the path of a binary file,
-// the function checks for a "0x00" byte inside the first 8000 bytes, it's how
-// git does this.
-func IsBinary(path string) (bool, error) {
-	file, err := os.Stat(path)
-	if err != nil {
-		return false, err
-	}
-
-	if !file.Mode().IsRegular() {
-		return false, err
-	}
-
-	f, err := os.Open(path)
-	if err != nil {
-		return false, err
-	}
-	defer f.Close()
-
-	buf := make([]byte, 8000)
-	n, err := f.Read(buf)
-	if err != nil && n == 0 {
-		return false, err
-	}
-
-	return bytes.IndexByte(buf[:n], 0) != -1, nil
+type fileOutcome struct {
+	path               string
+	stats              fileStats
+	counted            bool
+	ignored            bool
+	binary             bool
+	unsupported        bool
+	collectUnsupported bool
+	err                error
 }
 
-func skipFile(v fileEntry, config Config) bool {
-	if slices.Contains(filenameToIgnore, v.Entry.Name()) {
-		return true
-	}
+func applyOutcome(result *Result, outcome fileOutcome, metrics *Metrics) {
+	switch {
+	case outcome.err != nil:
+		metrics.failedFiles.Add(1)
+		kind := "file_error"
+		if errors.Is(outcome.err, ErrLineTooLong) {
+			kind = "line_too_long"
+		}
+		result.Warnings = append(result.Warnings, Warning{Path: outcome.path, Kind: kind, Error: outcome.err.Error()})
 
-	if strings.HasPrefix(v.Entry.Name(), ".") && !config.NoIgnoreDotFiles {
-		return true
-	}
+	case outcome.binary:
+		metrics.binaryFiles.Add(1)
+	case outcome.ignored:
+		metrics.filesIgnored.Add(1)
+	case outcome.counted:
+		metrics.filesCounted.Add(1)
+		metrics.linesCounted.Add(int64(outcome.stats.BlankLines + outcome.stats.CommentLines + outcome.stats.CodeLines))
+		if outcome.unsupported {
+			metrics.unsupportedFiles.Add(1)
+			if outcome.collectUnsupported && result != nil && outcome.path != "" {
+				result.UnknownFiles = append(result.UnknownFiles, outcome.path)
+			}
+		}
 
-	if isBin, _ := IsBinary(v.fullpath()); isBin {
-		return true
+		addStats(result.Languages, outcome.stats)
 	}
-
-	return false
 }
 
-func checkCommentPrefix(trimmed string, markers commentMarkers) bool {
-	for _, v := range markers.Line {
-		if strings.HasPrefix(trimmed, v) {
-			return true
+func addStats(languages map[string]LanguageStats, stats fileStats) {
+	current := languages[stats.Languages]
+	current.Files++
+	current.BlankLines += stats.BlankLines
+	current.CommentLines += stats.CommentLines
+	current.CodeLines += stats.CodeLines
+	languages[stats.Languages] = current
+}
+
+func languageAllowed(language string, allowed map[string]struct{}) bool {
+	if len(allowed) == 0 {
+		return true
+	}
+
+	_, ok := allowed[strings.ToLower(language)]
+	return ok
+}
+
+func addDirectoryWarning(result *Result, metrics *Metrics, path string, err error) {
+	metrics.directoriesFailed.Add(1)
+	result.Warnings = append(result.Warnings, Warning{Path: path, Kind: "directory_error", Error: err.Error()})
+}
+
+func ValidateConfigPatterns(config Config) error {
+	patterns := append(append(append([]string{}, config.IncludePatterns...), config.ExcludePatterns...), config.ExcludeDirs...)
+
+	for _, pattern := range patterns {
+		if err := ignore.ValidatePattern(pattern); err != nil {
+			return fmt.Errorf("invalid pattern: %q: %w", pattern, err)
 		}
 	}
 
-	return false
+	return nil
 }
 
-func shebangLangs(line []byte) (string, bool) {
-	switch l := string(line); {
-	case strings.Contains(l, "#!/usr/bin/env perl"), strings.Contains(l, "#!/usr/bin/perl"), strings.Contains(l, "#!/bin/perl"):
-		return "Perl", true
-	case strings.Contains(l, "#!/usr/bin/bash"), strings.Contains(l, "#!/bin/bash"):
-		return "Bash", true
-	case strings.Contains(l, "#!/usr/bin/zsh"), strings.Contains(l, "#!/bin/zsh"):
-		return "Zsh", true
-	case strings.Contains(l, "#!/usr/bin/fish"), strings.Contains(l, "#!/bin/fish"):
-		return "Fish", true
-	case strings.Contains(l, "#!/usr/bin/python"), strings.Contains(l, "#!/bin/pyhton"):
-		return "Python", true
-	default:
-		return "Unknown", false
+type resultAccumulator struct {
+	mu      sync.Mutex
+	result  *Result
+	metrics *Metrics
+}
+
+func (a *resultAccumulator) addOutcome(outcome fileOutcome) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	applyOutcome(a.result, outcome, a.metrics)
+}
+
+func (a *resultAccumulator) addDirectoryWarning(path string, err error) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	addDirectoryWarning(a.result, a.metrics, path, err)
+}
+
+func init() {
+	if err := langs.Validate(); err != nil {
+		panic(err)
 	}
 }
