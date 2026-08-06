@@ -38,7 +38,7 @@ type options struct {
 	help              bool
 	version           bool
 	listLanguages     bool
-	noStats           bool
+	stats             bool
 	includeHidden     bool
 	noConcurrency     bool
 	noProgress        bool
@@ -167,7 +167,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		}
 	}
 
-	if !options.noStats {
+	if options.stats {
 		statsWriter := stdout
 		if format != report.FormatTable {
 			statsWriter = stderr
@@ -195,9 +195,8 @@ func parseArgs(args []string, stdout, stderr io.Writer) (options, string, int) {
 	flags.BoolVar(&opts.version, "version", false, "Show version")
 	flags.BoolVar(&opts.listLanguages, "list-languages", false, "List supported languages")
 
-	flags.BoolVar(&opts.noStats, "no-stats", false, "Disable execution statistics")
-	flags.BoolVar(&opts.noStats, "noStats", false, "Alias for --no-stats")
-	flags.BoolVar(&opts.noStats, "ns", false, "Alias for --no-stats")
+	flags.BoolVar(&opts.stats, "stats", false, "Enable execution statistics")
+	flags.BoolVar(&opts.stats, "s", false, "Alias for --no-stats")
 	flags.BoolVar(&opts.includeHidden, "include-hidden", false, "Include hidden files and directories")
 	flags.BoolVar(&opts.includeHidden, "noIgnoreDotFiles", false, "Alias for --include-hidden")
 	flags.BoolVar(&opts.includeHidden, "ni", false, "Alias for --include-hidden")
@@ -285,7 +284,7 @@ func writeUsage(w io.Writer) {
 	fmt.Fprintln(w, "  --workers N                  counting workers; 0 selects automatically")
 	fmt.Fprintln(w, "  --max-line-size SIZE         line limit such as 16MiB; 0 is unlimited")
 	fmt.Fprintln(w, "  --no-concurrency             run traversal and counting sequentially")
-	fmt.Fprintln(w, "  --no-stats                   disable human-readable statistics")
+	fmt.Fprintln(w, "  --stats                      enable human-readable statistics")
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Filtering:")
 	fmt.Fprintln(w, "  --include-hidden             include hidden files and directories")
