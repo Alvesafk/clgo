@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schema_version": 1,
   "languages": [
     {
       "name": "Go",
@@ -7,12 +7,12 @@
         ".go"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -44,12 +44,12 @@
         ".c"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -75,12 +75,12 @@
         ".odin"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -106,12 +106,12 @@
         ".h"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -139,12 +139,12 @@
         ".cxx"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -172,12 +172,12 @@
         ".hxx"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -203,12 +203,12 @@
         ".cs"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -236,12 +236,12 @@
         ".cjs"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -273,12 +273,12 @@
         ".jsx"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "{/*",
             "close": "*/}"
@@ -316,12 +316,12 @@
         ".cts"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -353,12 +353,12 @@
         ".tsx"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "{/*",
             "close": "*/}"
@@ -394,12 +394,12 @@
         ".java"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -426,7 +426,7 @@
         ".pyw"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -437,14 +437,14 @@
             "close": "\"\"\"",
             "escape": "\\",
             "multiline": true,
-            "commentWhenStandalone": true
+            "comment_when_standalone": true
           },
           {
             "open": "'''",
             "close": "'''",
             "escape": "\\",
             "multiline": true,
-            "commentWhenStandalone": true
+            "comment_when_standalone": true
           },
           {
             "open": "\"",
@@ -465,10 +465,10 @@
         ".sh"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#",
-            "boundaryBefore": true
+            "boundary_before": true
           }
         ],
         "strings": [
@@ -496,10 +496,10 @@
         ".bash"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#",
-            "boundaryBefore": true
+            "boundary_before": true
           }
         ],
         "strings": [
@@ -527,10 +527,10 @@
         ".zsh"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#",
-            "boundaryBefore": true
+            "boundary_before": true
           }
         ],
         "strings": [
@@ -558,10 +558,10 @@
         ".fish"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#",
-            "boundaryBefore": true
+            "boundary_before": true
           }
         ],
         "strings": [
@@ -589,12 +589,12 @@
         ".sql"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "--"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -621,7 +621,7 @@
         ".htm"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -647,12 +647,12 @@
         ".vue"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -688,16 +688,16 @@
         ".rb"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "=begin",
             "close": "=end",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ],
         "strings": [
@@ -720,12 +720,12 @@
         ".lua"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "--"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "--[[",
             "close": "]]"
@@ -751,12 +751,12 @@
         ".rs"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/",
@@ -795,7 +795,7 @@
         ".mailmap",
         ".get_maintainer.ignore"
       ],
-      "filenamePatterns": [
+      "filename_patterns": [
         "README-*",
         "COPYING-*",
         "CREDITS-*",
@@ -809,7 +809,7 @@
         ".markdown"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -824,7 +824,7 @@
         ".phtml"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           },
@@ -832,7 +832,7 @@
             "marker": "#"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -873,12 +873,12 @@
         ".jsonc"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -915,10 +915,10 @@
         ".clang-tidy"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#",
-            "boundaryBefore": true
+            "boundary_before": true
           }
         ],
         "strings": [
@@ -942,12 +942,12 @@
         ".lhs"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "--"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "{-",
             "close": "-}",
@@ -975,12 +975,12 @@
         ".kts"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/",
@@ -1007,12 +1007,12 @@
         ".swift"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/",
@@ -1040,7 +1040,7 @@
         ".exs"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1068,7 +1068,7 @@
         ".edn"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": ";"
           }
@@ -1093,7 +1093,7 @@
         ".r"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1118,12 +1118,12 @@
         ".dart"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1149,7 +1149,7 @@
         ".css"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1175,12 +1175,12 @@
         ".scss"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1215,14 +1215,14 @@
         ".pylintrc"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": ";",
-            "lineStartOnly": true
+            "line_start_only": true
           },
           {
             "marker": "#",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ],
         "strings": [
@@ -1245,7 +1245,7 @@
         ".toml"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1270,7 +1270,7 @@
         ".xml"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -1298,12 +1298,12 @@
         ".psd1"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<#",
             "close": "#>"
@@ -1330,7 +1330,7 @@
         ".tfvars"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           },
@@ -1338,7 +1338,7 @@
             "marker": "#"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1364,16 +1364,16 @@
         ".m"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "%"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "%{",
             "close": "%}",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ],
         "strings": [
@@ -1396,12 +1396,12 @@
         ".mm"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1424,12 +1424,12 @@
     {
       "name": "Objective-C Headers",
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1455,10 +1455,10 @@
         ".rst"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "..",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ]
       }
@@ -1470,7 +1470,7 @@
         ".s"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": ";"
           },
@@ -1481,7 +1481,7 @@
             "marker": "#"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1513,7 +1513,7 @@
         "Build",
         "Platform"
       ],
-      "filenamePatterns": [
+      "filename_patterns": [
         "Makefile.*",
         "Makefile_*",
         "Kbuild.*",
@@ -1522,7 +1522,7 @@
         "Build_*"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1548,12 +1548,12 @@
         "defconfig",
         ".config"
       ],
-      "filenamePatterns": [
+      "filename_patterns": [
         "Kconfig.*",
         "*_defconfig"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1580,12 +1580,12 @@
         ".dtso"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1611,12 +1611,12 @@
         ".cocci"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1642,7 +1642,7 @@
         ".asn1"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "--"
           }
@@ -1667,7 +1667,7 @@
         ".asdl"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "--"
           }
@@ -1692,7 +1692,7 @@
         ".gram"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1717,12 +1717,12 @@
         ".gperf"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1748,7 +1748,7 @@
         ".tbl"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1774,7 +1774,7 @@
         ".uni"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -1801,7 +1801,7 @@
         ".seq"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           },
@@ -1809,7 +1809,7 @@
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1836,12 +1836,12 @@
         ".gv"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1884,14 +1884,14 @@
         ".roff"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": ".\\\"",
-            "lineStartOnly": true
+            "line_start_only": true
           },
           {
             "marker": "'\\\"",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ]
       }
@@ -1910,16 +1910,16 @@
         ".cgi"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "=pod",
             "close": "=cut",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ],
         "strings": [
@@ -1943,12 +1943,12 @@
         ".sc"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -1977,12 +1977,12 @@
         ".gsh"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -2008,7 +2008,7 @@
         ".zig"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
@@ -2035,12 +2035,12 @@
         ".fsx"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "(*",
             "close": "*)",
@@ -2068,7 +2068,7 @@
         ".bas"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "'"
           }
@@ -2088,7 +2088,7 @@
         ".hrl"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "%"
           }
@@ -2116,7 +2116,7 @@
         "Dockerfile"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2142,16 +2142,16 @@
         ".cmd"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "REM",
-            "lineStartOnly": true,
-            "boundaryAfter": true,
-            "caseInsensitive": true
+            "line_start_only": true,
+            "boundary_after": true,
+            "case_insensitive": true
           },
           {
             "marker": "::",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ],
         "strings": [
@@ -2168,7 +2168,7 @@
         ".svg"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -2194,12 +2194,12 @@
         ".y"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -2226,7 +2226,7 @@
         ".pot"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2251,12 +2251,12 @@
         ".l"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -2282,7 +2282,7 @@
         ".awk"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2314,7 +2314,7 @@
         ".jinja2"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "{#",
             "close": "#}"
@@ -2340,7 +2340,7 @@
         ".build"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -2366,7 +2366,7 @@
         ".ui"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -2393,12 +2393,12 @@
         ".x"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -2424,7 +2424,7 @@
         ".xsd"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -2450,7 +2450,7 @@
         ".feature"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2477,7 +2477,7 @@
         ".cls"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "%"
           }
@@ -2491,12 +2491,12 @@
         ".ttcn3"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -2522,7 +2522,7 @@
         ".def"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": ";"
           }
@@ -2540,12 +2540,12 @@
         ".ld.s"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "/*",
             "close": "*/"
@@ -2574,7 +2574,7 @@
         "Snakefile"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2599,10 +2599,10 @@
         ".m4"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "dnl",
-            "lineStartOnly": true
+            "line_start_only": true
           }
         ]
       }
@@ -2614,7 +2614,7 @@
         ".xslt"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -2640,7 +2640,7 @@
         ".glade"
       ],
       "syntax": {
-        "blockComments": [
+        "block_comments": [
           {
             "open": "<!--",
             "close": "-->"
@@ -2668,7 +2668,7 @@
         ".npmignore"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2695,7 +2695,7 @@
         ".bbclass"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2720,7 +2720,7 @@
         ".um"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "//"
           }
@@ -2745,7 +2745,7 @@
         ".sed"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "#"
           }
@@ -2770,7 +2770,7 @@
         ".vim"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "\""
           }
@@ -2783,12 +2783,12 @@
         ".vm"
       ],
       "syntax": {
-        "lineComments": [
+        "line_comments": [
           {
             "marker": "##"
           }
         ],
-        "blockComments": [
+        "block_comments": [
           {
             "open": "#*",
             "close": "*#"

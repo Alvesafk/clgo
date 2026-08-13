@@ -67,7 +67,7 @@ type Language struct {
 var defaultCatalogueJSON []byte
 
 type catalogueFile struct {
-	SchemaVersion int        `json:"schemaVersion"`
+	SchemaVersion int        `json:"schema_version"`
 	Languages     []langFile `json:"languages"`
 }
 
@@ -76,27 +76,27 @@ type langFile struct {
 	Extensions       []string   `json:"extensions,omitempty"`
 	Suffixes         []string   `json:"suffixes,omitempty"`
 	Filenames        []string   `json:"filenames,omitempty"`
-	FilenamePatterns []string   `json:"filenamePatterns,omitempty"`
+	FilenamePatterns []string   `json:"filename_patterns,omitempty"`
 	Syntax           syntaxFile `json:"syntax"`
 }
 
 type syntaxFile struct {
-	LineComments  []lineCommentFile  `json:"lineComments,omitempty"`
-	BlockComments []blockCommentFile `json:"blockComments,omitempty"`
+	LineComments  []lineCommentFile  `json:"line_comments,omitempty"`
+	BlockComments []blockCommentFile `json:"block_comments,omitempty"`
 	Strings       []stringFile       `json:"strings,omitempty"`
 }
 
 type lineCommentFile struct {
-	LineStartOnly   bool   `json:"lineStartOnly,omitempty"`
-	BoundaryBefore  bool   `json:"boundaryBefore,omitempty"`
-	BoundaryAfter   bool   `json:"boundaryAfter,omitempty"`
-	CaseInsensitive bool   `json:"caseInsensitive,omitempty"`
+	LineStartOnly   bool   `json:"line_start_only,omitempty"`
+	BoundaryBefore  bool   `json:"boundary_before,omitempty"`
+	BoundaryAfter   bool   `json:"boundary_after,omitempty"`
+	CaseInsensitive bool   `json:"case_insensitive,omitempty"`
 	Marker          string `json:"marker"`
 }
 
 type blockCommentFile struct {
 	Nested        bool   `json:"nested,omitempty"`
-	LineStartOnly bool   `json:"lineStartOnly,omitempty"`
+	LineStartOnly bool   `json:"line_start_only,omitempty"`
 	Open          string `json:"open"`
 	Close         string `json:"close"`
 }
@@ -104,7 +104,7 @@ type blockCommentFile struct {
 type stringFile struct {
 	Raw                   bool   `json:"raw,omitempty"`
 	Multiline             bool   `json:"multiline,omitempty"`
-	CommentWhenStandalone bool   `json:"commentWhenStandalone,omitempty"`
+	CommentWhenStandalone bool   `json:"comment_when_standalone,omitempty"`
 	Open                  string `json:"open"`
 	Close                 string `json:"close"`
 	Escape                string `json:"escape,omitempty"`
