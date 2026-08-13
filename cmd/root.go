@@ -196,7 +196,7 @@ func parseArgs(args []string, stdout, stderr io.Writer) (options, string, int) {
 	flags.BoolVar(&opts.listLanguages, "list-languages", false, "List supported languages")
 
 	flags.BoolVar(&opts.stats, "stats", false, "Enable execution statistics")
-	flags.BoolVar(&opts.stats, "s", false, "Alias for --no-stats")
+	flags.BoolVar(&opts.stats, "s", false, "Alias for --stats")
 	flags.BoolVar(&opts.includeHidden, "include-hidden", false, "Include hidden files and directories")
 	flags.BoolVar(&opts.includeHidden, "noIgnoreDotFiles", false, "Alias for --include-hidden")
 	flags.BoolVar(&opts.includeHidden, "ni", false, "Alias for --include-hidden")

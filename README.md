@@ -32,7 +32,7 @@ Examples:
 ```sh
 clgo ./project
 clgo --format json --no-progress ./project
-clgo --format csv --no-stats ./main.go
+clgo --format csv --stats ./main.go
 clgo --ignore-ext .md,.txt --recursion 5 ./project
 clgo --use-gitignore --exclude-dir vendor --exclude '*.generated.go' ./project
 clgo --include '*.go' --languages Go --workers 4 ./project
@@ -48,7 +48,7 @@ clgo --show-unknown ./linux
 --workers N              counting workers; 0 selects automatically
 --max-line-size SIZE     maximum bytes per line; 0 is unlimited
 --no-concurrency         sequential traversal and counting
---no-stats               disable human-readable statistics
+--stats                  enable statistics
 --progress               force progress outside an interactive terminal
 --no-progress            disable progress
 ```
