@@ -25,27 +25,27 @@ const (
 )
 
 type LineComment struct {
-	Marker          string
 	LineStartOnly   bool
 	BoundaryBefore  bool
 	BoundaryAfter   bool
 	CaseInsensitive bool
+	Marker          string
 }
 
 type BlockComment struct {
-	Open          string
-	Close         string
 	Nested        bool
 	LineStartOnly bool
+	Open          string
+	Close         string
 }
 
 type StringDelimiter struct {
-	Open                  string
-	Close                 string
 	Escape                byte
 	Raw                   bool
 	Multiline             bool
 	CommentWhenStandalone bool
+	Open                  string
+	Close                 string
 }
 
 type Syntax struct {
@@ -56,11 +56,11 @@ type Syntax struct {
 
 type Language struct {
 	Name             string
+	Syntax           Syntax
 	Extensions       []string
 	Suffixes         []string
 	Filenames        []string
 	FilenamePatterns []string
-	Syntax           Syntax
 }
 
 //go:embed langs.json
@@ -87,27 +87,27 @@ type syntaxFile struct {
 }
 
 type lineCommentFile struct {
-	Marker          string `json:"marker"`
 	LineStartOnly   bool   `json:"lineStartOnly,omitempty"`
 	BoundaryBefore  bool   `json:"boundaryBefore,omitempty"`
 	BoundaryAfter   bool   `json:"boundaryAfter,omitempty"`
 	CaseInsensitive bool   `json:"caseInsensitive,omitempty"`
+	Marker          string `json:"marker"`
 }
 
 type blockCommentFile struct {
-	Open          string `json:"open"`
-	Close         string `json:"close"`
 	Nested        bool   `json:"nested,omitempty"`
 	LineStartOnly bool   `json:"lineStartOnly,omitempty"`
+	Open          string `json:"open"`
+	Close         string `json:"close"`
 }
 
 type stringFile struct {
-	Open                  string `json:"open"`
-	Close                 string `json:"close"`
-	Escape                string `json:"escape,omitempty"`
 	Raw                   bool   `json:"raw,omitempty"`
 	Multiline             bool   `json:"multiline,omitempty"`
 	CommentWhenStandalone bool   `json:"commentWhenStandalone,omitempty"`
+	Open                  string `json:"open"`
+	Close                 string `json:"close"`
+	Escape                string `json:"escape,omitempty"`
 }
 
 func (f langFile) toLanguage() (Language, error) {
@@ -115,6 +115,7 @@ func (f langFile) toLanguage() (Language, error) {
 	if err != nil {
 		return Language{}, fmt.Errorf("language %q: %w", f.Name, err)
 	}
+
 	return Language{
 		Name:             f.Name,
 		Extensions:       f.Extensions,
@@ -131,6 +132,7 @@ func (f syntaxFile) toSyntax() (Syntax, error) {
 		BlockComments: make([]BlockComment, len(f.BlockComments)),
 		Strings:       make([]StringDelimiter, len(f.Strings)),
 	}
+
 	for i, lc := range f.LineComments {
 		syntax.LineComments[i] = LineComment{
 			Marker:          lc.Marker,
@@ -140,6 +142,7 @@ func (f syntaxFile) toSyntax() (Syntax, error) {
 			CaseInsensitive: lc.CaseInsensitive,
 		}
 	}
+
 	for i, bc := range f.BlockComments {
 		syntax.BlockComments[i] = BlockComment{
 			Open:          bc.Open,
@@ -148,6 +151,7 @@ func (f syntaxFile) toSyntax() (Syntax, error) {
 			LineStartOnly: bc.LineStartOnly,
 		}
 	}
+
 	for i, sd := range f.Strings {
 		escape, err := decodeEscape(sd.Escape)
 		if err != nil {
@@ -162,6 +166,7 @@ func (f syntaxFile) toSyntax() (Syntax, error) {
 			CommentWhenStandalone: sd.CommentWhenStandalone,
 		}
 	}
+
 	return syntax, nil
 }
 
@@ -169,9 +174,11 @@ func decodeEscape(value string) (byte, error) {
 	if value == "" {
 		return 0, nil
 	}
+
 	if len(value) != 1 {
 		return 0, fmt.Errorf("escape must be a single byte, got %q", value)
 	}
+
 	return value[0], nil
 }
 
@@ -181,6 +188,7 @@ func Load(path string) error {
 	if path == "" {
 		path = os.Getenv(overrideEnvVar)
 	}
+
 	if path != "" {
 		custom, err := os.ReadFile(path)
 		if err != nil {
@@ -194,6 +202,7 @@ func Load(path string) error {
 	if err := json.Unmarshal(data, &file); err != nil {
 		return fmt.Errorf("langs: parsing %s: %w", source, err)
 	}
+
 	if file.SchemaVersion != currentSchemaVersion {
 		return fmt.Errorf("langs: %s has schemaVersion %d, this build expects %d", source, file.SchemaVersion, currentSchemaVersion)
 	}
@@ -213,6 +222,7 @@ func Load(path string) error {
 		catalogue = previous
 		return fmt.Errorf("langs: %s failed validation: %w", source, err)
 	}
+
 	return nil
 }
 
