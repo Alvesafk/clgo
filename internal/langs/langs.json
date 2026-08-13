@@ -1,0 +1,2812 @@
+{
+  "schemaVersion": 1,
+  "languages": [
+    {
+      "name": "Go",
+      "extensions": [
+        ".go"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "raw": true,
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "C",
+      "extensions": [
+        ".c"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Odin",
+      "extensions": [
+        ".odin"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "C Headers",
+      "extensions": [
+        ".h"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "C++",
+      "extensions": [
+        ".cc",
+        ".cpp",
+        ".cxx"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "C++ Headers",
+      "extensions": [
+        ".hh",
+        ".hpp",
+        ".hxx"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "C#",
+      "extensions": [
+        ".cs"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "JavaScript",
+      "extensions": [
+        ".js",
+        ".mjs",
+        ".cjs"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "JavaScript React",
+      "extensions": [
+        ".jsx"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "{/*",
+            "close": "*/}"
+          },
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "TypeScript",
+      "extensions": [
+        ".ts",
+        ".mts",
+        ".cts"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "TypeScript React",
+      "extensions": [
+        ".tsx"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "{/*",
+            "close": "*/}"
+          },
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Java",
+      "extensions": [
+        ".java"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Python",
+      "extensions": [
+        ".py",
+        ".pyw"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"\"\"",
+            "close": "\"\"\"",
+            "escape": "\\",
+            "multiline": true,
+            "commentWhenStandalone": true
+          },
+          {
+            "open": "'''",
+            "close": "'''",
+            "escape": "\\",
+            "multiline": true,
+            "commentWhenStandalone": true
+          },
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Shell",
+      "extensions": [
+        ".sh"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#",
+            "boundaryBefore": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "raw": true
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bash",
+      "extensions": [
+        ".bash"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#",
+            "boundaryBefore": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "raw": true
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Zsh",
+      "extensions": [
+        ".zsh"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#",
+            "boundaryBefore": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "raw": true
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Fish",
+      "extensions": [
+        ".fish"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#",
+            "boundaryBefore": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "raw": true
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SQL",
+      "extensions": [
+        ".sql"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "--"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HTML",
+      "extensions": [
+        ".html",
+        ".htm"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vue",
+      "extensions": [
+        ".vue"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          },
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ruby",
+      "extensions": [
+        ".rb"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "=begin",
+            "close": "=end",
+            "lineStartOnly": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Lua",
+      "extensions": [
+        ".lua"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "--"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "--[[",
+            "close": "]]"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Rust",
+      "extensions": [
+        ".rs"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/",
+            "nested": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Text",
+      "extensions": [
+        ".txt"
+      ],
+      "filenames": [
+        "AUTHORS",
+        "COPYING",
+        "CREDITS",
+        "MAINTAINERS",
+        "README",
+        "TODO",
+        "kernel.release",
+        ".gitattributes",
+        ".git-blame-ignore-revs",
+        ".mailmap",
+        ".get_maintainer.ignore"
+      ],
+      "filenamePatterns": [
+        "README-*",
+        "COPYING-*",
+        "CREDITS-*",
+        "MAINTAINERS-*"
+      ]
+    },
+    {
+      "name": "Markdown",
+      "extensions": [
+        ".md",
+        ".markdown"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PHP",
+      "extensions": [
+        ".php",
+        ".phtml"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          },
+          {
+            "marker": "#"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "JSON",
+      "extensions": [
+        ".json"
+      ],
+      "syntax": {
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "JSONC",
+      "extensions": [
+        ".jsonc"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "YAML",
+      "extensions": [
+        ".yaml",
+        ".yml"
+      ],
+      "filenames": [
+        ".clang-format",
+        ".clang-tidy"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#",
+            "boundaryBefore": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Haskell",
+      "extensions": [
+        ".hs",
+        ".lhs"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "--"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "{-",
+            "close": "-}",
+            "nested": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Kotlin",
+      "extensions": [
+        ".kt",
+        ".kts"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/",
+            "nested": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Swift",
+      "extensions": [
+        ".swift"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/",
+            "nested": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Elixir",
+      "extensions": [
+        ".ex",
+        ".exs"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Clojure",
+      "extensions": [
+        ".clj",
+        ".cljs",
+        ".cljc",
+        ".edn"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": ";"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "R",
+      "extensions": [
+        ".r"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Dart",
+      "extensions": [
+        ".dart"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CSS",
+      "extensions": [
+        ".css"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SCSS",
+      "extensions": [
+        ".scss"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ini",
+      "extensions": [
+        ".ini",
+        ".cfg",
+        ".conf",
+        ".genkey"
+      ],
+      "filenames": [
+        ".cocciconfig",
+        ".editorconfig",
+        ".gitmodules",
+        ".pylintrc"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": ";",
+            "lineStartOnly": true
+          },
+          {
+            "marker": "#",
+            "lineStartOnly": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TOML",
+      "extensions": [
+        ".toml"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "XML",
+      "extensions": [
+        ".xml"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PowerShell",
+      "extensions": [
+        ".ps1",
+        ".psm1",
+        ".psd1"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "<#",
+            "close": "#>"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Terraform",
+      "extensions": [
+        ".tf",
+        ".tfvars"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          },
+          {
+            "marker": "#"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MATLAB",
+      "extensions": [
+        ".m"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "%"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "%{",
+            "close": "%}",
+            "lineStartOnly": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Objective-C",
+      "extensions": [
+        ".mm"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Objective-C Headers",
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "reStructuredText",
+      "extensions": [
+        ".rst"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "..",
+            "lineStartOnly": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Assembly",
+      "extensions": [
+        ".asm",
+        ".s"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": ";"
+          },
+          {
+            "marker": "//"
+          },
+          {
+            "marker": "#"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Makefile",
+      "extensions": [
+        ".mk"
+      ],
+      "filenames": [
+        "Makefile",
+        "GNUmakefile",
+        "Kbuild",
+        "Build",
+        "Platform"
+      ],
+      "filenamePatterns": [
+        "Makefile.*",
+        "Makefile_*",
+        "Kbuild.*",
+        "Kbuild_*",
+        "Build.*",
+        "Build_*"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Kconfig",
+      "filenames": [
+        "Kconfig",
+        "defconfig",
+        ".config"
+      ],
+      "filenamePatterns": [
+        "Kconfig.*",
+        "*_defconfig"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Device Tree",
+      "extensions": [
+        ".dts",
+        ".dtsi",
+        ".dtso"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Coccinelle",
+      "extensions": [
+        ".cocci"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ASN.1",
+      "extensions": [
+        ".asn1"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "--"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ASDL",
+      "extensions": [
+        ".asdl"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "--"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PEG Grammar",
+      "extensions": [
+        ".gram"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "gperf",
+      "extensions": [
+        ".gperf"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Kernel Table",
+      "extensions": [
+        ".tbl"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Kernel Keymap",
+      "extensions": [
+        ".map",
+        ".uni"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Kernel SCSI DSL",
+      "extensions": [
+        ".reg",
+        ".scr",
+        ".seq"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          },
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Graphviz",
+      "extensions": [
+        ".dot",
+        ".gv"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Diff",
+      "extensions": [
+        ".diff",
+        ".patch"
+      ]
+    },
+    {
+      "name": "Roff",
+      "extensions": [
+        ".1",
+        ".2",
+        ".3",
+        ".4",
+        ".5",
+        ".6",
+        ".7",
+        ".8",
+        ".9",
+        ".man",
+        ".roff"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": ".\\\"",
+            "lineStartOnly": true
+          },
+          {
+            "marker": "'\\\"",
+            "lineStartOnly": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "Perl",
+      "extensions": [
+        ".pl",
+        ".pm",
+        ".t",
+        ".pod",
+        ".plx",
+        ".perl",
+        ".al",
+        ".psgi",
+        ".cgi"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "=pod",
+            "close": "=cut",
+            "lineStartOnly": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Scala",
+      "extensions": [
+        ".scala",
+        ".sc"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Groovy",
+      "extensions": [
+        ".groovy",
+        ".gvy",
+        ".gy",
+        ".gsh"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Zig",
+      "extensions": [
+        ".zig"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "F#",
+      "extensions": [
+        ".fs",
+        ".fsi",
+        ".fsx"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "(*",
+            "close": "*)",
+            "nested": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Visual Basic",
+      "extensions": [
+        ".vb",
+        ".bas"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "'"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Erlang",
+      "extensions": [
+        ".erl",
+        ".hrl"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "%"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Dockerfile",
+      "extensions": [
+        ".dockerfile"
+      ],
+      "filenames": [
+        "Dockerfile"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Batch",
+      "extensions": [
+        ".bat",
+        ".cmd"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "REM",
+            "lineStartOnly": true,
+            "boundaryAfter": true,
+            "caseInsensitive": true
+          },
+          {
+            "marker": "::",
+            "lineStartOnly": true
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\""
+          }
+        ]
+      }
+    },
+    {
+      "name": "SVG",
+      "extensions": [
+        ".svg"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "yacc",
+      "extensions": [
+        ".y"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PO File",
+      "extensions": [
+        ".po",
+        ".pot"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "lex",
+      "extensions": [
+        ".l"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "awk",
+      "extensions": [
+        ".awk"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CSV",
+      "extensions": [
+        ".csv"
+      ]
+    },
+    {
+      "name": "Jinja Template",
+      "extensions": [
+        ".jinja",
+        ".jinja2"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "{#",
+            "close": "#}"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "NAnt script",
+      "extensions": [
+        ".build"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "XML (Qt/GTK)",
+      "extensions": [
+        ".ui"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Logos",
+      "extensions": [
+        ".xm",
+        ".x"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "XSD",
+      "extensions": [
+        ".xsd"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Cucumber",
+      "extensions": [
+        ".feature"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TeX",
+      "extensions": [
+        ".tex",
+        ".sty",
+        ".cls"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "%"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TNSDL",
+      "extensions": [
+        ".ttcn",
+        ".ttcn3"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Windows Module Definition",
+      "extensions": [
+        ".def"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": ";"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Linker Script",
+      "extensions": [
+        ".ld",
+        ".lds"
+      ],
+      "suffixes": [
+        ".lds.s",
+        ".ld.s"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Snakemake",
+      "extensions": [
+        ".smk"
+      ],
+      "filenames": [
+        "Snakefile"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "m4",
+      "extensions": [
+        ".m4"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "dnl",
+            "lineStartOnly": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "XSLT",
+      "extensions": [
+        ".xsl",
+        ".xslt"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Glade",
+      "extensions": [
+        ".glade"
+      ],
+      "syntax": {
+        "blockComments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Git Ignore",
+      "filenames": [
+        ".gitignore",
+        ".dockerignore",
+        ".npmignore"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BitBake",
+      "extensions": [
+        ".bb",
+        ".bbappend",
+        ".bbclass"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Umka",
+      "extensions": [
+        ".um"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sed",
+      "extensions": [
+        ".sed"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "vim script",
+      "extensions": [
+        ".vim"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "\""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Velocity Template Language",
+      "extensions": [
+        ".vm"
+      ],
+      "syntax": {
+        "lineComments": [
+          {
+            "marker": "##"
+          }
+        ],
+        "blockComments": [
+          {
+            "open": "#*",
+            "close": "*#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    }
+  ]
+}
