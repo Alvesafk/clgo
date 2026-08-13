@@ -143,7 +143,7 @@ func compileCLI(pattern string) (*regexp.Regexp, error) {
 	}
 
 	if !anchored && !strings.Contains(pattern, "/") {
-		return regexp.Compile(`^(?:.*/)` + body + `$`)
+		return regexp.Compile(`^(?:.*/)?` + body + `$`)
 	}
 
 	return regexp.Compile(`^` + body + `$`)
@@ -192,7 +192,7 @@ func parseGitIgnoreRule(base, raw string) (rule, bool, error) {
 		expression = `^` + basePrefix + `(?:.*/)?` + body
 	}
 
-	expression += `(?:.*/)?$`
+	expression += `(?:/.*)?$`
 	re, err := regexp.Compile(expression)
 	if err != nil {
 		return rule{}, false, err

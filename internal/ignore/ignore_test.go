@@ -17,6 +17,7 @@ func TestCLIGlobs(t *testing.T) {
 		want    bool
 	}{
 		{"*.go", "cmd/main.go", true},
+		{"*.go", "main.go", true},
 		{"*_test.go", "main.go", false},
 		{"vendor/**", "vendor/a/b.go", true},
 		{"/cmd/*.go", "cmd/main.go", true},
