@@ -15,18 +15,6 @@ import (
 	"testing"
 )
 
-func writeTestFile(t *testing.T, dir, name string, content []byte) string {
-	t.Helper()
-	path := filepath.Join(dir, name)
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(path, content, 0o600); err != nil {
-		t.Fatal(err)
-	}
-	return path
-}
-
 func TestResultTotalsAndLanguageOrdering(t *testing.T) {
 	result := Result{Languages: map[string]LanguageStats{
 		"Go":     {Files: 2, BlankLines: 1, CommentLines: 2, CodeLines: 10},
