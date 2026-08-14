@@ -9,7 +9,7 @@ Hide
 
 Set TypingSpeed 0.1
 
-Type "alias clgo='clgo --no-stats --ignore-ext .tape --exclude-dir assets/ --use-gitignore'"
+Type "alias clgo='clgo --ignore-ext .tape --exclude-dir assets/ --use-gitignore'"
 Enter
 
 Type "clear"
