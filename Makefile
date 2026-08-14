@@ -5,22 +5,23 @@ VERSION ?= dev
 DIST := dist
 LDFLAGS := -s -w -X github.com/Alvesafk/clgo/cmd.Version=$(VERSION)
 
-.PHONY: help fmt lint test test-cover test-race vet staticcheck bench coverage build release-local clean
+.PHONY: help fmt lint test test-cover test-race test-benchmark vet staticcheck bench coverage build release-local clean
 
 help:
 	@printf '%s\n' \
-		'make fmt           format Go sources' \
-		'make lint          run linter' \
-		'make test          run unit tests' \
-		'make test-cover    run tests and show coverage' \
-		'make test-race     run tests with race detector' \
-		'make vet           run go vet' \
-		'make staticcheck   run staticcheck when installed' \
-		'make bench         run benchmarks' \
-		'make coverage      write dist/coverage.html' \
-		'make build         build the host binary' \
-		'make release-local build Linux, Windows, and macOS archives locally' \
-		'make clean         remove generated artifacts'
+		'make fmt            format Go sources' \
+		'make lint           run linter' \
+		'make test           run unit tests' \
+		'make test-cover     run tests and show coverage' \
+		'make test-race      run tests with race detector' \
+		'make test-benchmark run benchmark' \
+		'make vet            run go vet' \
+		'make staticcheck    run staticcheck when installed' \
+		'make bench          run benchmarks' \
+		'make coverage       write dist/coverage.html' \
+		'make build          build the host binary' \
+		'make release-local  build Linux, Windows, and macOS archives locally' \
+		'make clean          remove generated artifacts'
 
 fmt:
 	gofmt -s -w $$(find . -name '*.go' -type f)
@@ -36,6 +37,9 @@ test-cover:
 
 test-race:
 	go test -race ./...
+
+test-benchmark:
+	go test ./internal/cloc -run . -bench . -benchmem
 
 vet:
 	go vet ./...
