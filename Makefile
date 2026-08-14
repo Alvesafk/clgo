@@ -5,13 +5,14 @@ VERSION ?= dev
 DIST := dist
 LDFLAGS := -s -w -X github.com/Alvesafk/clgo/cmd.Version=$(VERSION)
 
-.PHONY: help fmt lint test test-race vet staticcheck bench coverage build release-local clean
+.PHONY: help fmt lint test test-cover test-race vet staticcheck bench coverage build release-local clean
 
 help:
 	@printf '%s\n' \
 		'make fmt           format Go sources' \
 		'make lint          run linter' \
 		'make test          run unit tests' \
+		'make test-cover    run tests and show coverage' \
 		'make test-race     run tests with race detector' \
 		'make vet           run go vet' \
 		'make staticcheck   run staticcheck when installed' \
@@ -29,6 +30,9 @@ lint:
 
 test:
 	go test ./...
+
+test-cover:
+	go test --cover ./...
 
 test-race:
 	go test -race ./...
