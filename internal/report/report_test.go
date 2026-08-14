@@ -18,7 +18,8 @@ import (
 	"github.com/Alvesafk/clgo/internal/cloc"
 )
 
-func sampleDocument() Document {
+func sampleDocument(t *testing.T) Document {
+	t.Helper()
 	result := cloc.Result{
 		Source:      "project",
 		IsDirectory: true,
@@ -40,7 +41,7 @@ func TestJSONReporter(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := reporter.Write(&output, sampleDocument()); err != nil {
+	if err := reporter.Write(&output, sampleDocument(t)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -66,7 +67,7 @@ func TestCSVReporter(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = reporter.Write(&output, sampleDocument()); err != nil {
+	if err = reporter.Write(&output, sampleDocument(t)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -91,7 +92,7 @@ func TestTableReporter(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	if err := reporter.Write(&output, sampleDocument()); err != nil {
+	if err := reporter.Write(&output, sampleDocument(t)); err != nil {
 		t.Fatal(err)
 	}
 
@@ -111,7 +112,7 @@ func TestNewRejectsUnknownFormat(t *testing.T) {
 
 func TestWriteStats(t *testing.T) {
 	var output bytes.Buffer
-	doc := sampleDocument()
+	doc := sampleDocument(t)
 	if err := WriteStats(&output, doc.Result, doc.Performance); err != nil {
 		t.Fatal(err)
 	}
@@ -131,13 +132,13 @@ func TestReportersPropagateWriteErrors(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			if err = reporter.Write(failingWriter{}, sampleDocument()); err == nil {
+			if err = reporter.Write(failingWriter{}, sampleDocument(t)); err == nil {
 				t.Fatal("expected write error")
 			}
 		})
 	}
 
-	if err := WriteStats(failingWriter{}, sampleDocument().Result, sampleDocument().Performance); err == nil {
+	if err := WriteStats(failingWriter{}, sampleDocument(t).Result, sampleDocument(t).Performance); err == nil {
 		t.Fatal("expected stats write error")
 	}
 }
