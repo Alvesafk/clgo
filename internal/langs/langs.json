@@ -683,6 +683,47 @@
       }
     },
     {
+      "name": "Svelte",
+      "extensions": [
+        ".svelte"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "<!--",
+            "close": "-->"
+          },
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          },
+          {
+            "open": "'",
+            "close": "'",
+            "escape": "\\"
+          },
+          {
+            "open": "`",
+            "close": "`",
+            "escape": "\\",
+            "multiline": true
+          }
+        ]
+      }
+    },
+    {
       "name": "Ruby",
       "extensions": [
         ".rb"
