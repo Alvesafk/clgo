@@ -41,7 +41,8 @@
     {
       "name": "C",
       "extensions": [
-        ".c"
+        ".c",
+        ".uc"
       ],
       "syntax": {
         "line_comments": [
@@ -169,7 +170,8 @@
       "extensions": [
         ".hh",
         ".hpp",
-        ".hxx"
+        ".hxx",
+        ".inl"
       ],
       "syntax": {
         "line_comments": [
@@ -463,6 +465,9 @@
       "name": "Shell",
       "extensions": [
         ".sh"
+      ],
+      "filenames": [
+        "forwarding.config"
       ],
       "syntax": {
         "line_comments": [
@@ -821,7 +826,21 @@
     {
       "name": "Text",
       "extensions": [
-        ".txt"
+        ".txt",
+        ".asc",
+        ".boot",
+        ".changelog",
+        ".checkpatch",
+        ".doc",
+        ".expected",
+        ".ids",
+        ".modes",
+        ".orderfile",
+        ".readme",
+        ".scl"
+      ],
+      "suffixes": [
+        ".rst.exceptions"
       ],
       "filenames": [
         "AUTHORS",
@@ -834,7 +853,8 @@
         ".gitattributes",
         ".git-blame-ignore-revs",
         ".mailmap",
-        ".get_maintainer.ignore"
+        ".get_maintainer.ignore",
+        "SubmittingPatches"
       ],
       "filename_patterns": [
         "README-*",
@@ -1247,7 +1267,9 @@
         ".ini",
         ".cfg",
         ".conf",
-        ".genkey"
+        ".genkey",
+        ".inf",
+        ".service"
       ],
       "filenames": [
         ".cocciconfig",
@@ -1508,7 +1530,8 @@
       "name": "Assembly",
       "extensions": [
         ".asm",
-        ".s"
+        ".s",
+        ".sa"
       ],
       "syntax": {
         "line_comments": [
@@ -1545,14 +1568,16 @@
     {
       "name": "Makefile",
       "extensions": [
-        ".mk"
+        ".mk",
+        ".mak"
       ],
       "filenames": [
         "Makefile",
         "GNUmakefile",
         "Kbuild",
         "Build",
-        "Platform"
+        "Platform",
+        "subarch.include"
       ],
       "filename_patterns": [
         "Makefile.*",
@@ -1584,6 +1609,9 @@
     },
     {
       "name": "Kconfig",
+      "extensions": [
+        ".kconfig"
+      ],
       "filenames": [
         "Kconfig",
         "defconfig",
@@ -1591,7 +1619,8 @@
       ],
       "filename_patterns": [
         "Kconfig.*",
-        "*_defconfig"
+        "*_defconfig",
+        "CFcommon.*"
       ],
       "syntax": {
         "line_comments": [
@@ -2352,7 +2381,8 @@
       "name": "Jinja Template",
       "extensions": [
         ".jinja",
-        ".jinja2"
+        ".jinja2",
+        ".j2"
       ],
       "syntax": {
         "block_comments": [
@@ -2580,6 +2610,9 @@
         ".lds.s",
         ".ld.s"
       ],
+      "filenames": [
+        "ld.script"
+      ],
       "syntax": {
         "line_comments": [
           {
@@ -2637,7 +2670,8 @@
     {
       "name": "m4",
       "extensions": [
-        ".m4"
+        ".m4",
+        ".ac"
       ],
       "syntax": {
         "line_comments": [
@@ -2844,6 +2878,320 @@
           {
             "open": "'",
             "close": "'",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Litmus Test",
+      "extensions": [
+        ".litmus"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "(*",
+            "close": "*)"
+          },
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Cat",
+      "extensions": [
+        ".cat",
+        ".bell"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "(*",
+            "close": "*)"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Falcon Assembly",
+      "extensions": [
+        ".fuc",
+        ".fuc0s",
+        ".fuc3",
+        ".fuc4",
+        ".fuc5"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "bc",
+      "extensions": [
+        ".bc"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\""
+          }
+        ]
+      }
+    },
+    {
+      "name": "Lark",
+      "extensions": [
+        ".lark"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bootconfig",
+      "extensions": [
+        ".bconf"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Packetdrill",
+      "extensions": [
+        ".pkt"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "bpftrace",
+      "extensions": [
+        ".bt"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SWIG",
+      "extensions": [
+        ".swg"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "XS",
+      "extensions": [
+        ".xs"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "//"
+          }
+        ],
+        "block_comments": [
+          {
+            "open": "/*",
+            "close": "*/"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
+            "escape": "\\"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RPM Spec",
+      "extensions": [
+        ".spec"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "#"
+          }
+        ]
+      }
+    },
+    {
+      "name": "pkg-config",
+      "extensions": [
+        ".pc"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "#"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LTL",
+      "extensions": [
+        ".ltl"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "#"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Rules",
+      "extensions": [
+        ".rules"
+      ],
+      "syntax": {
+        "line_comments": [
+          {
+            "marker": "#"
+          }
+        ],
+        "strings": [
+          {
+            "open": "\"",
+            "close": "\"",
             "escape": "\\"
           }
         ]

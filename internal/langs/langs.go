@@ -247,8 +247,18 @@ var (
 		".a": {}, ".bin": {}, ".bz2": {}, ".dtb": {}, ".dtbo": {}, ".elf": {},
 		".fw": {}, ".gz": {}, ".hex": {}, ".ihex": {}, ".ko": {}, ".o": {},
 		".srec": {}, ".symvers": {}, ".xz": {}, ".zst": {},
+		".pbm": {}, ".pgm": {}, ".ppm": {}, ".xpm": {}, ".log": {},
 	}
 	ignoredFilenames = map[string]struct{}{"license": {}, "licenses": {}, "node_modules": {}, ".git": {}}
+
+	// wrapperSuffixes mark files whose real type is given by the name
+	// before the suffix, such as config.c.in or libbpf.pc.template.
+	wrapperSuffixes = []string{"_shipped", ".in", ".template", ".default", ".example"}
+
+	// textStems are document names that still read as plain text when they
+	// carry an arbitrary suffix (README.hp300, ChangeLog.lpfc). They are only
+	// a fallback, so README.md keeps resolving to Markdown.
+	textStems = []string{"readme.", "changelog.", "denylist."}
 )
 
 type nameRule struct {
@@ -308,10 +318,12 @@ func Detect(filename string, prefix []byte) (language string, ignore bool) {
 		return shebang, false
 	}
 
-	if strings.HasSuffix(baseLower, "_shipped") {
-		trimmed := filename[:len(filename)-len("_shipped")]
-		if detected, ignored := Detect(trimmed, prefix); detected != Unknown || ignored {
-			return detected, ignored
+	for _, suffix := range wrapperSuffixes {
+		if len(baseLower) > len(suffix) && strings.HasSuffix(baseLower, suffix) {
+			trimmed := filename[:len(filename)-len(suffix)]
+			if detected, ignored := Detect(trimmed, prefix); detected != Unknown || ignored {
+				return detected, ignored
+			}
 		}
 	}
 
@@ -345,6 +357,10 @@ func Detect(filename string, prefix []byte) (language string, ignore bool) {
 		return "Kconfig", false
 	}
 
+	if strings.HasPrefix(baseLower, "config.") && looksLikeKconfigValues(prefix) {
+		return "Kconfig", false
+	}
+
 	filenameLower := strings.ToLower(filename)
 	for _, rule := range suffixRules {
 		if strings.HasSuffix(filenameLower, rule.value) {
@@ -358,6 +374,16 @@ func Detect(filename string, prefix []byte) (language string, ignore bool) {
 
 	if isExtensionless(baseLower) && looksLikeText(prefix) {
 		return "Text", false
+	}
+
+	if strings.HasPrefix(baseLower, "license.") {
+		return "", true
+	}
+
+	for _, stem := range textStems {
+		if strings.HasPrefix(baseLower, stem) && looksLikeText(prefix) {
+			return "Text", false
+		}
 	}
 
 	return Unknown, false
@@ -552,6 +578,22 @@ func looksLikeKconfig(prefix []byte) bool {
 			line == "menu", line == "choice":
 			return true
 		}
+	}
+
+	return false
+}
+
+// looksLikeKconfigValues reports whether the first meaningful line is a
+// CONFIG_ assignment. It is stricter than looksLikeKconfig because it is used
+// on names like config.x86_64, where a loose match would misfire.
+func looksLikeKconfigValues(prefix []byte) bool {
+	for raw := range strings.SplitSeq(string(prefix), "\n") {
+		line := strings.TrimSpace(raw)
+		if line == "" || (strings.HasPrefix(line, "#") && !strings.HasPrefix(line, "# CONFIG_")) {
+			continue
+		}
+
+		return strings.HasPrefix(line, "CONFIG_") || strings.HasPrefix(line, "# CONFIG_")
 	}
 
 	return false
